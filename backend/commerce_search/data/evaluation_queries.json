@@ -1,0 +1,17 @@
+[
+  {"query": "budget samsung phone", "intent": "price_sensitive", "relevant_terms": ["samsung", "phone", "prepaid"], "expected_category": "Cell Phones"},
+  {"query": "iPhone 15 clear case", "intent": "brand_exact", "relevant_terms": ["iphone", "case", "transparent", "clear"], "expected_category": "Phone Cases"},
+  {"query": "wireless headphones for music", "intent": "attribute_filter", "relevant_terms": ["headphones", "wireless", "bluetooth", "music"], "expected_category": "Headphones"},
+  {"query": "portable speaker for travel", "intent": "attribute_filter", "relevant_terms": ["speaker", "portable", "bluetooth", "travel"], "expected_category": "Speakers"},
+  {"query": "cheap laptop for school", "intent": "price_sensitive", "relevant_terms": ["laptop", "notebook", "student", "school"], "expected_category": "Laptops"},
+  {"query": "4k tv for streaming", "intent": "attribute_filter", "relevant_terms": ["tv", "television", "4k", "streaming"], "expected_category": "4K TVs"},
+  {"query": "camera for photo beginner", "intent": "scenario_need", "relevant_terms": ["camera", "photo", "beginner", "digital"], "expected_category": "Cameras"},
+  {"query": "gaming keyboard", "intent": "attribute_filter", "relevant_terms": ["gaming", "keyboard", "mechanical"], "expected_category": "Keyboards"},
+  {"query": "home office printer", "intent": "scenario_need", "relevant_terms": ["printer", "office", "wireless"], "expected_category": "Printers"},
+  {"query": "bluetooth earbuds discount", "intent": "promotion_intent", "relevant_terms": ["earbuds", "bluetooth", "headphones"], "expected_category": "Wireless Earbuds"},
+  {"query": "women summer sun protection jacket", "intent": "scenario_need", "relevant_terms": ["women", "summer", "sun protection", "jacket"], "expected_category": "Women's Clothing"},
+  {"query": "oil control sunscreen spf50", "intent": "attribute_filter", "relevant_terms": ["sunscreen", "spf50", "oil control"], "expected_category": "Skincare"},
+  {"query": "small air fryer for dorm", "intent": "scenario_need", "relevant_terms": ["air fryer", "kitchen", "compact", "dorm"], "expected_category": "Air Fryers"},
+  {"query": "cordless vacuum for car", "intent": "attribute_filter", "relevant_terms": ["vacuum", "cordless", "car", "portable"], "expected_category": "Vacuum Cleaners"},
+  {"query": "instant coffee for office", "intent": "scenario_need", "relevant_terms": ["coffee", "instant", "office"], "expected_category": "Coffee"}
+]
