@@ -1,0 +1,48 @@
+services:
+  - type: web
+    name: insurance-rag-api
+    runtime: python
+    buildCommand: cd backend && pip install -r requirements.txt
+    startCommand: cd backend && uvicorn api_server:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: ENABLE_ES
+        value: "true"
+      - key: ENABLE_EMBEDDING
+        value: "true"
+      - key: ES_INDEX
+        value: ai_search_insurance_chunks
+      - key: ES_USER
+        value: elastic
+      - key: ES_VERIFY_CERTS
+        value: "true"
+      - key: QWEN_CHAT_MODEL
+        value: qwen-turbo
+      - key: EMBEDDING_MODEL
+        value: text-embedding-v4
+      - key: EMBEDDING_DIMENSIONS
+        value: "1024"
+      - key: RAG_CHUNK_SIZE
+        value: "1200"
+      - key: RAG_CHUNK_OVERLAP
+        value: "180"
+      - key: RAG_TOP_K
+        value: "6"
+      - key: TAVILY_API_URL
+        value: https://api.tavily.com/search
+      - key: TAVILY_SEARCH_DEPTH
+        value: basic
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: DASHSCOPE_API_KEY
+        sync: false
+      - key: TAVILY_API_KEY
+        sync: false
+      - key: ES_HOST
+        sync: false
+      - key: ES_PORT
+        sync: false
+      - key: ES_PASSWORD
+        sync: false

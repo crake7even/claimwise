@@ -30,10 +30,18 @@ class ChatRequest(BaseModel):
 
 
 load_dotenv()
+
+
+def allowed_origins() -> list[str]:
+    raw = os.getenv("ALLOWED_ORIGINS", "")
+    origins = [item.strip() for item in raw.split(",") if item.strip()]
+    return origins or ["http://127.0.0.1:3000", "http://localhost:3000"]
+
+
 app = FastAPI(title="Insurance RAG API")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:3000", "http://localhost:3000"],
+    allow_origins=allowed_origins(),
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -139,4 +147,3 @@ def chat(request: ChatRequest) -> StreamingResponse:
     if not message:
         return StreamingResponse(iter(["请输入问题。"]), media_type="text/plain; charset=utf-8")
     return StreamingResponse(stream_answer(message, request.mode), media_type="text/plain; charset=utf-8")
-

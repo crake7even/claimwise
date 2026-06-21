@@ -5,6 +5,8 @@ import { ChatInput } from "./components/ChatInput";
 import type { Message, SearchMode } from "./types";
 import { Trash2 } from "lucide-react";
 
+const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "");
+
 const welcomeMessage: Message = {
   id: "welcome",
   role: "ai",
@@ -51,7 +53,7 @@ export default function App() {
     setIsProcessing(true);
 
     try {
-      const response = await fetch("/api/chat", {
+      const response = await fetch(`${apiBaseUrl}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: text, mode }),

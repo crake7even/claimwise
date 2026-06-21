@@ -43,8 +43,10 @@ def env_int(name: str, default: int) -> int:
 
 
 def es_base_url() -> str:
-    host = os.getenv("ES_HOST", "https://localhost").rstrip("/")
-    port = os.getenv("ES_PORT", "9200").strip()
+    raw_host = os.getenv("ES_HOST")
+    host = (raw_host or "https://localhost").rstrip("/")
+    default_port = "9200" if raw_host is None or "localhost" in host or "127.0.0.1" in host else ""
+    port = os.getenv("ES_PORT", default_port).strip()
     if port and ":" not in host.rsplit("/", 1)[-1]:
         return f"{host}:{port}"
     return host
