@@ -1,3 +1,0 @@
-# Core demo and Qwen enhancement use Python stdlib.
-# Optional UI:
-gradio

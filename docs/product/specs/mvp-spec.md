@@ -37,7 +37,7 @@
 
 - 前端 `/api` proxy 继续指向 `http://127.0.0.1:7870`。
 - 后端仍从 `backend/.env` 加载本机敏感配置。
-- `.codex-memory` 只保存项目记忆和交接，不替代 Spec。
+- 临时协作记录只保留在本地，不替代正式 Spec。
 - `docs/product` 保存正式产品文档和开发依据。
 - `docs/design` 保存视觉参考和设计说明。
 

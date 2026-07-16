@@ -1,6 +1,6 @@
 import React, { KeyboardEvent, useState } from "react";
 import type { SearchMode } from "../types";
-import { Select } from "@base-ui-components/react/select";
+import { Select } from "@base-ui/react/select";
 import { SendHorizontal, Zap } from "lucide-react";
 
 interface ChatInputProps {

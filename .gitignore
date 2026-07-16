@@ -20,3 +20,16 @@ backend/commerce_search/reports/*.json
 # OS/editor
 .DS_Store
 Thumbs.db
+
+# Local collaboration context
+/.codex-memory/
+/AGENTS.md
+
+# Archived experiments kept locally
+/backend/commerce_search/
+/backend/ai_bot-1.py
+/backend/ai_bot-6-ui-test.py
+/backend/block_api_demo1.py
+/backend/logo.png
+/backend/知乎直答.png
+/frontend/metadata.json
