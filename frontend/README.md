@@ -1,6 +1,9 @@
-# 前端说明
+# Insurance RAG Assistant Frontend
 
-本目录是保险资料智能问答系统的 React/Vite 前端。
+本目录是 `Insurance RAG Assistant｜保险资料智能问答系统` 的 React/Vite 前端。
+
+- GitHub：[crake7even/insurance-rag-assistant](https://github.com/crake7even/insurance-rag-assistant)
+- 在线 Demo：[insurance-rag-frontend.netlify.app](https://insurance-rag-frontend.netlify.app)
 
 ## 运行
 

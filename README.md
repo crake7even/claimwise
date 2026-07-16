@@ -1,6 +1,14 @@
-# 保险资料智能问答系统
+# Insurance RAG Assistant
 
-这是迁移后的本地可运行完整项目，包含前端 UI、后端 AI 搜索问答服务、设计参考和 Codex 项目记忆。
+> 保险资料智能问答系统
+
+面向保险文档的混合检索 RAG 问答项目，结合 BM25、Elasticsearch、Qwen Embedding 和 Tavily 联网搜索，提供 React/Vite 前端与 FastAPI 流式问答服务。
+
+## 在线地址
+
+- GitHub：[crake7even/insurance-rag-assistant](https://github.com/crake7even/insurance-rag-assistant)
+- 在线 Demo：[insurance-rag-frontend.netlify.app](https://insurance-rag-frontend.netlify.app)
+- API 健康检查：[insurance-rag-api-hoz9.onrender.com/api/health](https://insurance-rag-api-hoz9.onrender.com/api/health)
 
 ## 目录结构
 
