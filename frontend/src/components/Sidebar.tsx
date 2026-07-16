@@ -1,29 +1,45 @@
-import React from "react";
+import React, { useRef } from "react";
 import {
   Bot,
   ChevronLeft,
   ChevronRight,
-  ClipboardCheck,
-  FileSearch,
+  Download,
   History,
   MessageSquare,
   MessageSquarePlus,
+  Trash2,
+  Upload,
 } from "lucide-react";
+import type { ChatSession } from "../types";
 
 interface SidebarProps {
   collapsed: boolean;
   onToggle: () => void;
-  onFAQClick: (question: string) => void;
   onNewChat: () => void;
+  sessions: ChatSession[];
+  currentSessionId: string;
+  onSelectSession: (sessionId: string) => void;
+  onDeleteSession: (sessionId: string) => void;
+  onExport: () => void;
+  onImport: (file: File) => void;
 }
 
-const recentQueries = ["雇主责任险对比", "工伤保险咨询"];
-
-export function Sidebar({ collapsed, onToggle, onFAQClick, onNewChat }: SidebarProps) {
-  const navItemClass =
-    "flex h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium text-slate-700 transition-colors hover:bg-blue-50 hover:text-blue-700";
-  const activeNavItemClass =
-    "flex h-11 items-center gap-3 rounded-lg bg-blue-50 px-3 text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-100";
+export function Sidebar({
+  collapsed,
+  onToggle,
+  onNewChat,
+  sessions,
+  currentSessionId,
+  onSelectSession,
+  onDeleteSession,
+  onExport,
+  onImport,
+}: SidebarProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const primaryButtonClass =
+    "flex h-11 items-center gap-3 rounded-lg bg-blue-600 px-3 text-sm font-semibold text-white shadow-sm shadow-blue-100 transition-colors hover:bg-blue-700";
+  const utilityButtonClass =
+    "flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-950";
 
   return (
     <aside
@@ -43,48 +59,115 @@ export function Sidebar({ collapsed, onToggle, onFAQClick, onNewChat }: SidebarP
         )}
       </div>
 
-      <div className="min-h-0 flex-1 overflow-hidden px-3 py-5">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-3 py-5">
         {!collapsed && <p className="mb-2 px-2 text-xs font-bold text-slate-700">会话管理</p>}
-        <nav className="space-y-2">
+        <div className="space-y-2">
           <button
             type="button"
             onClick={onNewChat}
-            className={`${activeNavItemClass} ${collapsed ? "justify-center px-0" : ""}`}
-            title="新对话"
+            className={`${primaryButtonClass} ${collapsed ? "justify-center px-0" : ""}`}
+            title="开启新对话"
           >
             <MessageSquarePlus className="h-4 w-4 shrink-0" />
-            {!collapsed && <span>新对话</span>}
+            {!collapsed && <span>开启新对话</span>}
           </button>
-          <button type="button" className={`${navItemClass} ${collapsed ? "justify-center px-0" : ""}`} title="历史会话">
-            <History className="h-4 w-4 shrink-0" />
-            {!collapsed && <span>历史会话</span>}
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="application/json,.json"
+            className="hidden"
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+              if (file) onImport(file);
+              event.target.value = "";
+            }}
+          />
+
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className={`${utilityButtonClass} ${collapsed ? "justify-center px-0" : ""}`}
+            title="导入历史"
+          >
+            <Upload className="h-4 w-4 shrink-0" />
+            {!collapsed && <span>导入历史</span>}
           </button>
-          <button type="button" className={`${navItemClass} ${collapsed ? "justify-center px-0" : ""}`} title="保单分析">
-            <FileSearch className="h-4 w-4 shrink-0" />
-            {!collapsed && <span>保单分析</span>}
+
+          <button
+            type="button"
+            onClick={onExport}
+            className={`${utilityButtonClass} ${collapsed ? "justify-center px-0" : ""}`}
+            title="导出历史"
+          >
+            <Download className="h-4 w-4 shrink-0" />
+            {!collapsed && <span>导出历史</span>}
           </button>
-          <button type="button" className={`${navItemClass} ${collapsed ? "justify-center px-0" : ""}`} title="理赔辅助">
-            <ClipboardCheck className="h-4 w-4 shrink-0" />
-            {!collapsed && <span>理赔辅助</span>}
-          </button>
-        </nav>
+        </div>
 
         {!collapsed && (
-          <div className="mt-5">
-            <p className="mb-2 px-2 text-xs font-bold text-slate-700">最近查询</p>
-            <div className="space-y-1">
-              {recentQueries.map((query) => (
-                <button
-                  key={query}
-                  type="button"
-                  onClick={() => onFAQClick(query)}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900"
-                >
-                  <MessageSquare className="h-3.5 w-3.5 shrink-0" />
-                  <span className="truncate">{query}</span>
-                </button>
-              ))}
+          <div className="mt-6 flex min-h-0 flex-1 flex-col">
+            <div className="mb-2 flex items-center gap-2 px-2 text-xs font-bold text-slate-700">
+              <History className="h-3.5 w-3.5" />
+              历史会话
             </div>
+            <div className="min-h-0 space-y-1 overflow-y-auto pr-1">
+              {sessions.length === 0 ? (
+                <div className="rounded-lg border border-dashed border-slate-200 px-3 py-4 text-xs leading-5 text-slate-500">
+                  开始提问后，会话会自动保存到这里。
+                </div>
+              ) : (
+                sessions.map((session) => (
+                  <div
+                    key={session.id}
+                    className={`group flex items-center rounded-lg transition-colors ${
+                      session.id === currentSessionId
+                        ? "bg-blue-50 text-blue-700"
+                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-950"
+                    }`}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => onSelectSession(session.id)}
+                      className="flex min-w-0 flex-1 items-center gap-3 px-3 py-2 text-left text-sm"
+                      title={session.title}
+                    >
+                      <MessageSquare className="h-3.5 w-3.5 shrink-0" />
+                      <span className="truncate">{session.title}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        onDeleteSession(session.id);
+                      }}
+                      className="mr-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-400 opacity-0 transition hover:bg-white hover:text-red-600 group-hover:opacity-100"
+                      title="删除会话"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+
+        {collapsed && (
+          <div className="mt-3 space-y-2">
+            {sessions.slice(0, 6).map((session) => (
+              <button
+                key={session.id}
+                type="button"
+                onClick={() => onSelectSession(session.id)}
+                className={`flex h-10 w-full items-center justify-center rounded-lg transition-colors ${
+                  session.id === currentSessionId ? "bg-blue-50 text-blue-700" : "text-slate-500 hover:bg-slate-100"
+                }`}
+                title={session.title}
+              >
+                <MessageSquare className="h-4 w-4" />
+              </button>
+            ))}
           </div>
         )}
       </div>

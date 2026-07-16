@@ -6,6 +6,31 @@ interface ChatMessageProps {
   message: Message;
 }
 
+function renderBoldText(content: string) {
+  const nodes: React.ReactNode[] = [];
+  const pattern = /\*\*([^*]+)\*\*/g;
+  let cursor = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = pattern.exec(content)) !== null) {
+    if (match.index > cursor) {
+      nodes.push(content.slice(cursor, match.index));
+    }
+    nodes.push(
+      <strong key={`${match.index}-${match[1]}`} className="font-semibold text-slate-950">
+        {match[1]}
+      </strong>,
+    );
+    cursor = match.index + match[0].length;
+  }
+
+  if (cursor < content.length) {
+    nodes.push(content.slice(cursor));
+  }
+
+  return nodes.length > 0 ? nodes : content;
+}
+
 export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   const isUser = message.role === "user";
 
@@ -43,7 +68,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
       </div>
       <div className="max-w-[78%] space-y-3">
         <div className="whitespace-pre-wrap rounded-xl border border-slate-200 bg-white px-5 py-4 text-sm leading-6 text-slate-900 shadow-sm">
-          {message.content}
+          {renderBoldText(message.content)}
           {message.isStreaming && (
             <span className="ml-1 inline-block h-4 w-1.5 -mb-0.5 animate-pulse bg-slate-400" />
           )}

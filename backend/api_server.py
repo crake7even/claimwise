@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 import os
-from typing import Iterator
+from typing import Iterator, Literal
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from openai import OpenAI
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from rag_upgrade import HybridRagService
 from rag_upgrade.config import load_dotenv
@@ -25,8 +25,8 @@ MODE_FLAGS = {
 
 
 class ChatRequest(BaseModel):
-    message: str
-    mode: str = "quick"
+    message: str = Field(max_length=4000)
+    mode: Literal["quick", "semantic", "web"] = "quick"
 
 
 load_dotenv()
@@ -38,7 +38,11 @@ def allowed_origins() -> list[str]:
     return origins or ["http://127.0.0.1:3000", "http://localhost:3000"]
 
 
-app = FastAPI(title="Insurance RAG API")
+app = FastAPI(
+    title="Insurance RAG API",
+    version="1.0.0",
+    description="Hybrid retrieval API for the Insurance RAG Assistant.",
+)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins(),
@@ -131,13 +135,13 @@ def stream_answer(message: str, mode: str) -> Iterator[str]:
 
 @app.get("/api/health")
 def health() -> dict:
-    status = service.status()
+    chunks = len(service.chunks)
     return {
-        "ok": True,
-        "chunks": status.get("chunks", 0),
-        "quick": bool(status.get("elasticsearch")),
-        "semantic": status.get("embedding") == "ready",
-        "web": status.get("external_search") in {"ready", "searched"},
+        "ok": chunks > 0,
+        "chunks": chunks,
+        "quick": chunks > 0,
+        "semantic": bool(service.embedding and service.embedding.enabled),
+        "web": bool(service.external.api_key),
     }
 
 
