@@ -9,7 +9,7 @@
 
 一个面向保险文档的混合检索 RAG 项目。系统结合本地 BM25、Elasticsearch、Qwen Embedding 和 Tavily 联网搜索，通过 FastAPI 向 React 前端流式输出回答。
 
-- 在线 Demo：[insurance-rag-frontend.netlify.app](https://insurance-rag-frontend.netlify.app)
+- 在线 Demo：[insurance-rag-frontend.netlify.app](https://insurance-rag-frontend.netlify.app) 
 - API 健康检查：[insurance-rag-api-hoz9.onrender.com/api/health](https://insurance-rag-api-hoz9.onrender.com/api/health)
 > Render 免费实例可能休眠，首次请求通常需要等待冷启动。
 
