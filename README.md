@@ -11,8 +11,6 @@
 
 - 在线 Demo：[insurance-rag-frontend.netlify.app](https://insurance-rag-frontend.netlify.app)
 - API 健康检查：[insurance-rag-api-hoz9.onrender.com/api/health](https://insurance-rag-api-hoz9.onrender.com/api/health)
-- GitHub：[crake7even/insurance-rag-assistant](https://github.com/crake7even/insurance-rag-assistant)
-
 > Render 免费实例可能休眠，首次请求通常需要等待冷启动。
 
 ## 项目亮点
