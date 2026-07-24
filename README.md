@@ -1,6 +1,6 @@
-# Insurance RAG Assistant
+# ClaimWise: **Insurance RAG Assistant**
 
-[![CI](https://github.com/crake7even/insurance-rag-assistant/actions/workflows/ci.yml/badge.svg)](https://github.com/crake7even/insurance-rag-assistant/actions/workflows/ci.yml)
+[![CI](https://github.com/crake7even/claimwise/actions/workflows/ci.yml/badge.svg)](https://github.com/crake7even/claimwise/actions/workflows/ci.yml)
 [![Python 3.11](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![React 19](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=111)](https://react.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -56,8 +56,8 @@ flowchart LR
 Windows PowerShell：
 
 ```powershell
-git clone https://github.com/crake7even/insurance-rag-assistant.git
-cd insurance-rag-assistant
+git clone https://github.com/crake7even/claimwise.git
+cd claimwise
 
 py -3.11 -m venv backend\.venv
 backend\.venv\Scripts\python.exe -m pip install -r backend\requirements.txt
@@ -76,7 +76,7 @@ API 文档：`http://127.0.0.1:7870/docs`
 另开一个 PowerShell：
 
 ```powershell
-cd insurance-rag-assistant\frontend
+cd claimwise\frontend
 npm ci
 npm run dev
 ```
@@ -113,7 +113,7 @@ npm run build
 ## 目录结构
 
 ```text
-insurance-rag-assistant/
+claimwise/
 ├─ backend/
 │  ├─ api_server.py          # FastAPI 入口
 │  ├─ rag_upgrade/           # 文档切分与混合检索
