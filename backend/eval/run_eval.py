@@ -1,6 +1,6 @@
 """检索评测：对评测集逐题检索，计算 Hit@1 / Recall@5 / MRR@10，并输出 Markdown 报告与 JSON 摘要。
 
-默认离线运行（关闭 ES、Embedding、Tavily），只评测本地 BM25，不需要任何 API Key。
+默认离线运行（关闭 ES、Embedding、联网搜索），只评测本地 BM25，不需要任何 API Key。
 
 用法：
   python eval/run_eval.py                      # dev 集，离线
@@ -100,7 +100,7 @@ def main() -> int:
     args = parser.parse_args()
 
     if not args.online:
-        os.environ.update({"ENABLE_ES": "false", "ENABLE_EMBEDDING": "false", "DASHSCOPE_API_KEY": "", "TAVILY_API_KEY": ""})
+        os.environ.update({"ENABLE_ES": "false", "ENABLE_EMBEDDING": "false", "DASHSCOPE_API_KEY": "", "BOCHA_API_KEY": ""})
 
     from rag_upgrade import HybridRagService
 
@@ -110,6 +110,11 @@ def main() -> int:
 
     service = HybridRagService()
     use_es, use_embedding = MODE_FLAGS[args.mode]
+    if use_embedding:
+        if not service.embedding or not service.embedding.ensure_index():
+            status = service.embedding.status if service.embedding else "disabled"
+            print(f"Embedding 不可用，终止评测：{status}", file=sys.stderr)
+            return 1
 
     results: list[dict] = []
     for row in rows:

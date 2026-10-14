@@ -19,7 +19,7 @@ services:
       - key: ES_VERIFY_CERTS
         value: "true"
       - key: QWEN_CHAT_MODEL
-        value: qwen-turbo
+        value: qwen3.6-flash
       - key: EMBEDDING_MODEL
         value: text-embedding-v4
       - key: EMBEDDING_DIMENSIONS
@@ -30,15 +30,15 @@ services:
         value: "180"
       - key: RAG_TOP_K
         value: "6"
-      - key: TAVILY_API_URL
-        value: https://api.tavily.com/search
-      - key: TAVILY_SEARCH_DEPTH
-        value: basic
+      - key: BOCHA_API_URL
+        value: https://api.bochaai.com/v1/web-search
+      - key: BOCHA_FRESHNESS
+        value: noLimit
       - key: ALLOWED_ORIGINS
         sync: false
       - key: DASHSCOPE_API_KEY
         sync: false
-      - key: TAVILY_API_KEY
+      - key: BOCHA_API_KEY
         sync: false
       - key: ES_HOST
         sync: false

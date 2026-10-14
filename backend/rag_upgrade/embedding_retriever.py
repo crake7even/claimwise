@@ -67,7 +67,7 @@ class EmbeddingRetriever:
         )
         return [item.embedding for item in response.data]
 
-    def ensure_index(self, batch_size: int = 12) -> bool:
+    def ensure_index(self, batch_size: int = 10) -> bool:
         if not self.enabled:
             self.status = "DASHSCOPE_API_KEY is missing"
             return False
