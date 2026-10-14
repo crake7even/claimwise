@@ -115,6 +115,36 @@ class BochaExternalSearchTests(unittest.TestCase):
         self.assertIn("401", search.status)
 
 
+class RerankerRetryTests(unittest.TestCase):
+    def _reranker(self):
+        from rag_upgrade.reranker import DashScopeReranker
+
+        with patch.dict(os.environ, {"DASHSCOPE_API_KEY": "test-key"}):
+            return DashScopeReranker()
+
+    def test_retries_transient_network_error(self) -> None:
+        import urllib.error
+
+        response = MagicMock()
+        response.read.return_value = json.dumps({"output": {"results": [{"index": 1, "relevance_score": 0.9}]}}).encode()
+        response.__enter__.return_value = response
+        with patch("urllib.request.urlopen", side_effect=[urllib.error.URLError("dns"), response]) as urlopen, \
+                patch("rag_upgrade.reranker.time.sleep"):
+            ranked = self._reranker().rerank("q", ["a", "b"], top_n=2)
+        self.assertEqual(ranked, [(1, 0.9)])
+        self.assertEqual(urlopen.call_count, 2)
+
+    def test_does_not_retry_client_error(self) -> None:
+        import urllib.error
+
+        error = urllib.error.HTTPError("url", 401, "unauthorized", {}, None)
+        with patch("urllib.request.urlopen", side_effect=error) as urlopen, patch("rag_upgrade.reranker.time.sleep"):
+            reranker = self._reranker()
+            self.assertIsNone(reranker.rerank("q", ["a"], top_n=1))
+        self.assertEqual(urlopen.call_count, 1)
+        self.assertIn("401", reranker.status)
+
+
 class ApiContractTests(unittest.TestCase):
     def test_health_reports_offline_capabilities_truthfully(self) -> None:
         status = api_server.health()
@@ -182,6 +212,22 @@ class StreamAnswerTests(unittest.TestCase):
         with patch.object(api_server.service, "search", return_value=result):
             retrieved = api_server.retrieve("q", "quick", [], top_k=6)
         self.assertEqual([s["title"] for s in retrieved["sources"]], ["a"])
+
+    def test_web_search_uses_original_question_without_history(self) -> None:
+        empty = {"query": "q", "queries": ["q"], "status": {}, "reranked": False, "contexts": [], "external": []}
+        prefetched = [object()]
+        with patch.object(api_server.rewriter, "rewrite", return_value="改写后的条款查询"), \
+                patch.object(api_server.service.external, "search", return_value=prefetched) as web_search, \
+                patch.object(api_server.service, "search", return_value=empty) as search:
+            api_server.retrieve("无接触交通事故案例", "web", [], top_k=6)
+            # 无历史时联网搜索用原问题，并与查询改写并行预取
+            web_search.assert_called_once_with("无接触交通事故案例", top_k=3)
+            self.assertIs(search.call_args.kwargs["external_hits"], prefetched)
+            self.assertEqual(search.call_args.kwargs["external_query"], "无接触交通事故案例")
+            history = [{"role": "user", "content": "无接触交通事故案例"}, {"role": "assistant", "content": "..."}]
+            api_server.retrieve("上网搜一下", "web", history, top_k=6)
+            self.assertEqual(search.call_args.kwargs["external_query"], "改写后的条款查询")
+            self.assertIsNone(search.call_args.kwargs["external_hits"])
 
     def test_generation_error_emits_error_and_fallback(self) -> None:
         client = MagicMock()

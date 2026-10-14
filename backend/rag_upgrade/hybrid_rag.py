@@ -102,6 +102,8 @@ class HybridRagService:
         extra_queries: list[str] | None = None,
         embedding_queries: list[str] | None = None,
         rerank_query: str | None = None,
+        external_query: str | None = None,
+        external_hits: list | None = None,
     ) -> dict:
         """混合检索。extra_queries 为改写后的补充查询，与原查询的各路结果一起做 RRF；
         use_rerank 时对融合后的前 RERANK_CANDIDATES 个候选重排，失败则回退到融合排序。"""
@@ -117,9 +119,12 @@ class HybridRagService:
                 tasks.append((self.embedding.search, item))
         with ThreadPoolExecutor(max_workers=len(tasks) + 1) as pool:
             futures = [pool.submit(fn, item, top_k=candidate_k) for fn, item in tasks]
-            external_future = pool.submit(self.external.search, query, top_k=3) if use_external else None
+            need_external = use_external and external_hits is None  # 调用方已预取联网结果时不再重复搜索
+            external_future = pool.submit(self.external.search, external_query or query, top_k=3) if need_external else None
             groups: list[list[RetrievalHit]] = [future.result() for future in futures]
-            external_hits = external_future.result() if external_future else []
+            if external_future:
+                external_hits = external_future.result()
+        external_hits = external_hits or []
 
         reranked = False
         if use_rerank:
