@@ -1,4 +1,4 @@
-"""检索评测：对评测集逐题检索，计算 Hit@1 / Recall@5 / MRR@10，并输出 Markdown 报告与 JSON 摘要。
+"""检索评测：对评测集逐题检索，计算 Hit@1 / Recall@5 / Recall@固定上下文预算 / MRR@10，并输出 Markdown 报告与 JSON 摘要。
 
 默认离线运行（关闭 ES、Embedding、联网搜索），只评测本地 BM25，不需要任何 API Key。
 
@@ -26,11 +26,17 @@ BACKEND_DIR = Path(__file__).resolve().parents[1]
 EVAL_DIR = BACKEND_DIR / "eval"
 sys.path.insert(0, str(BACKEND_DIR))
 
+# (use_es, use_embedding, use_rerank, use_rewrite)
 MODE_FLAGS = {
-    "quick": (True, False),
-    "semantic": (True, True),
+    "quick": (True, False, False, False),
+    "semantic": (True, True, False, False),
+    "rerank": (True, True, True, False),
+    "rewrite": (True, True, False, True),
+    "full": (True, True, True, True),
 }
-SEARCH_DEPTH = 10
+SEARCH_DEPTH = 20
+# 固定上下文预算（字符）：不同 chunk 大小之间公平比较“LLM 实际能看到的资料”是否包含答案
+CONTEXT_BUDGET = 3000
 
 
 def normalize(text: str) -> str:
@@ -68,10 +74,19 @@ def evaluate_row(row: dict, contexts: list[dict]) -> dict:
             break
     hit1 = first_rank == 1
     recall5 = all(rank is not None and rank <= 5 for rank in found_at)
+    budget_contexts: list[dict] = []
+    used = 0
+    for ctx in contexts:
+        if used >= CONTEXT_BUDGET:
+            break
+        budget_contexts.append(ctx)
+        used += len(ctx["content"])
+    recall_budget = all(any(chunk_matches(ctx, source) for ctx in budget_contexts) for source in sources)
     return {
         "hit1": hit1,
         "recall5": recall5,
-        "mrr": 1.0 / first_rank if first_rank else 0.0,
+        "recall_budget": recall_budget,
+        "mrr": 1.0 / first_rank if first_rank and first_rank <= 10 else 0.0,
         "first_rank": first_rank,
         "found_at": found_at,
     }
@@ -93,7 +108,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="ClaimWise 检索评测")
     parser.add_argument("--dataset", default=str(EVAL_DIR / "dataset.jsonl"))
     parser.add_argument("--split", choices=["dev", "holdout", "all"], default="dev")
-    parser.add_argument("--mode", choices=sorted(MODE_FLAGS), default="quick")
+    parser.add_argument("--mode", choices=list(MODE_FLAGS), default="quick")
     parser.add_argument("--online", action="store_true", help="使用 .env 中的 ES / Embedding 配置")
     parser.add_argument("--baseline", help="基线 JSON 摘要路径，用于对比")
     parser.add_argument("--name", help="报告文件名（默认：日期-分支-模式）")
@@ -109,7 +124,14 @@ def main() -> int:
         rows = [row for row in rows if row["split"] == args.split]
 
     service = HybridRagService()
-    use_es, use_embedding = MODE_FLAGS[args.mode]
+    use_es, use_embedding, use_rerank, use_rewrite = MODE_FLAGS[args.mode]
+    if (use_rerank or use_rewrite) and not args.online:
+        print("rerank / rewrite / full 模式需要 --online", file=sys.stderr)
+        return 1
+    rewriter = None
+    if use_rewrite:
+        from rag_upgrade.query_rewriter import QueryRewriter
+        rewriter = QueryRewriter()
     if use_embedding:
         if not service.embedding or not service.embedding.ensure_index():
             status = service.embedding.status if service.embedding else "disabled"
@@ -119,17 +141,26 @@ def main() -> int:
     results: list[dict] = []
     for row in rows:
         started = time.perf_counter()
+        rewritten = rewriter.rewrite(row["question"]) if rewriter else None
         response = service.search(
-            row["question"], top_k=SEARCH_DEPTH,
-            use_es=use_es, use_embedding=use_embedding, use_external=False,
+            rewritten or row["question"], top_k=SEARCH_DEPTH,
+            use_es=use_es, use_embedding=use_embedding, use_external=False, use_rerank=use_rerank,
+            extra_queries=[row["question"]] if rewritten else None,
+            embedding_queries=[row["question"]],  # 与线上一致：改写后的查询只参与 BM25 召回
+            rerank_query=row["question"],  # 评测无多轮历史，与线上一致用原问题重排
         )
         latency_ms = (time.perf_counter() - started) * 1000
         contexts = response["contexts"]
-        top_score = contexts[0]["merged_score"] if contexts else 0.0
+        if use_rerank and not response["reranked"]:
+            print(f"Rerank 失败，终止评测：{service.status()['rerank']}", file=sys.stderr)
+            return 1
+        score_key = "rerank_score" if response["reranked"] else "merged_score"
+        top_score = contexts[0][score_key] if contexts else 0.0
         item = {
             "id": row["id"],
             "category": row["category"],
             "question": row["question"],
+            "rewritten": rewritten,
             "top_score": round(top_score, 4),
             "latency_ms": round(latency_ms, 2),
             "top3": [f"{Path(c['file_name']).stem}#{c['chunk_id']}" for c in contexts[:3]],
@@ -149,6 +180,7 @@ def main() -> int:
             "n": len(items),
             "hit1": round(mean([float(r["hit1"]) for r in items]), 4),
             "recall5": round(mean([float(r["recall5"]) for r in items]), 4),
+            "recall_budget": round(mean([float(r["recall_budget"]) for r in items]), 4),
             "mrr10": round(mean([r["mrr"] for r in items]), 4),
         }
 
@@ -179,7 +211,8 @@ def main() -> int:
     md_path.write_text(render_markdown(summary, results, baseline), encoding="utf-8")
 
     overall = summary["overall"]
-    print(f"[{summary['name']}] n={overall['n']} Hit@1={overall['hit1']:.3f} Recall@5={overall['recall5']:.3f} MRR@10={overall['mrr10']:.3f}")
+    print(f"[{summary['name']}] n={overall['n']} Hit@1={overall['hit1']:.3f} Recall@5={overall['recall5']:.3f} "
+          f"Recall@{CONTEXT_BUDGET}字={overall['recall_budget']:.3f} MRR@10={overall['mrr10']:.3f}")
     print(f"报告：{md_path.relative_to(BACKEND_DIR)}")
     return 0
 
@@ -202,8 +235,8 @@ def render_markdown(summary: dict, results: list[dict], baseline: dict | None) -
         "",
         "## 总体与分题型",
         "",
-        "| 题型 | n | Hit@1 | Recall@5 | MRR@10 |",
-        "|---|---|---|---|---|",
+        f"| 题型 | n | Hit@1 | Recall@5 | Recall@{CONTEXT_BUDGET}字 | MRR@10 |",
+        "|---|---|---|---|---|---|",
     ]
     rows = [("overall", summary["overall"])] + list(summary["by_category"].items())
     for name, m in rows:
@@ -212,7 +245,8 @@ def render_markdown(summary: dict, results: list[dict], baseline: dict | None) -
             base = baseline["overall"] if name == "overall" else baseline["by_category"].get(name)
         lines.append(
             f"| {name} | {m['n']} | {fmt_delta(m['hit1'], base and base['hit1'])} | "
-            f"{fmt_delta(m['recall5'], base and base['recall5'])} | {fmt_delta(m['mrr10'], base and base['mrr10'])} |"
+            f"{fmt_delta(m['recall5'], base and base['recall5'])} | "
+            f"{fmt_delta(m['recall_budget'], base and base.get('recall_budget'))} | {fmt_delta(m['mrr10'], base and base['mrr10'])} |"
         )
 
     dist = summary["score_distribution"]
