@@ -7,7 +7,7 @@
 
 > 保险资料智能问答系统
 
-一个面向保险文档的混合检索 RAG 项目。系统结合本地 BM25、Elasticsearch、Qwen Embedding 和 Tavily 联网搜索，通过 FastAPI 向 React 前端流式输出回答。
+一个面向保险文档的混合检索 RAG 项目。系统结合本地 BM25、Elasticsearch、Qwen Embedding 和博查联网搜索，通过 FastAPI 向 React 前端流式输出回答。
 
 - 在线 Demo：[insurance-rag-frontend.netlify.app](https://insurance-rag-frontend.netlify.app) 
 - API 健康检查：[insurance-rag-api-hoz9.onrender.com/api/health](https://insurance-rag-api-hoz9.onrender.com/api/health)
@@ -32,7 +32,7 @@ flowchart LR
     H --> B["Local BM25"]
     H --> E["Elasticsearch"]
     H --> Q["Qwen Embedding"]
-    H --> T["Tavily Search"]
+    H --> T["Bocha Web Search"]
     B --> C["检索上下文"]
     E --> C
     Q --> C
@@ -47,7 +47,7 @@ flowchart LR
 |---|---|---|
 | 快速检索 | `quick` | Local BM25 + Elasticsearch |
 | 语义理解 | `semantic` | Local BM25 + Elasticsearch + Qwen Embedding |
-| 联网搜索 | `web` | 本地检索 + Tavily 外部资料 |
+| 联网搜索 | `web` | 本地检索 + 博查联网搜索结果 |
 
 ## 快速开始
 
@@ -91,7 +91,7 @@ npm run dev
 |---|---|---|
 | `DASHSCOPE_API_KEY` | Qwen 对话与 Embedding | 否，缺失时降级为本地检索摘要 |
 | `ES_HOST` / `ES_PASSWORD` | Elasticsearch 召回 | 否 |
-| `TAVILY_API_KEY` | 联网搜索 | 否 |
+| `BOCHA_API_KEY` | 博查联网搜索 | 否 |
 | `ALLOWED_ORIGINS` | 允许访问 API 的前端来源 | 部署时必须配置 |
 | `VITE_API_BASE_URL` | 前端的线上 API 地址 | 前端部署时必须配置 |
 
@@ -108,7 +108,7 @@ npm run lint
 npm run build
 ```
 
-后端测试会禁用 ES、Embedding 和 Tavily，使用本地文档验证典型保险问题的 Top-1 召回结果，因此在 GitHub Actions 中不需要任何密钥。
+后端测试会禁用 ES、Embedding 和联网搜索，使用本地文档验证典型保险问题的 Top-1 召回结果，因此在 GitHub Actions 中不需要任何密钥。
 
 ## 目录结构
 

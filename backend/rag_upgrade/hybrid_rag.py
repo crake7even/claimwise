@@ -6,7 +6,7 @@ from .config import DOCS_DIR, env_bool, env_int, load_dotenv
 from .document_loader import load_chunks
 from .embedding_retriever import build_embedding_retriever, EmbeddingRetriever
 from .es_retriever import build_es_retriever, ElasticsearchHTTPRetriever
-from .external_search import TavilyExternalSearch
+from .external_search import BochaExternalSearch
 from .keyword_retriever import BM25Retriever, RetrievalHit
 
 
@@ -22,7 +22,7 @@ class HybridRagService:
         self.local = BM25Retriever(self.chunks)
         self.es: ElasticsearchHTTPRetriever | None = None
         self.embedding: EmbeddingRetriever | None = None
-        self.external = TavilyExternalSearch()
+        self.external = BochaExternalSearch()
         self._init_es()
         self._init_embedding()
 

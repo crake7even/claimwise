@@ -119,15 +119,18 @@ def stream_answer(message: str, mode: str) -> Iterator[str]:
 
 请基于以上资料回答。"""
     response = client.chat.completions.create(
-        model=os.getenv("QWEN_CHAT_MODEL", os.getenv("QWEN_MODEL", "qwen-turbo")),
+        model=os.getenv("QWEN_CHAT_MODEL", os.getenv("QWEN_MODEL", "qwen3.6-flash")),
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": user_prompt},
         ],
         temperature=0.2,
         stream=True,
+        extra_body={"enable_thinking": False},
     )
     for chunk in response:
+        if not chunk.choices:
+            continue
         delta = chunk.choices[0].delta.content or ""
         if delta:
             yield delta

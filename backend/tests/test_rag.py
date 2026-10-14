@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+import json
 import os
 from types import SimpleNamespace
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from pydantic import ValidationError
 
@@ -12,7 +13,7 @@ OFFLINE_ENV = {
     "ENABLE_ES": "false",
     "ENABLE_EMBEDDING": "false",
     "DASHSCOPE_API_KEY": "",
-    "TAVILY_API_KEY": "",
+    "BOCHA_API_KEY": "",
 }
 
 with patch.dict(os.environ, OFFLINE_ENV, clear=False):
@@ -47,6 +48,39 @@ class HybridRagOfflineTests(unittest.TestCase):
                 )
                 self.assertTrue(result["contexts"])
                 self.assertIn(expected_file_fragment, result["contexts"][0]["file_name"])
+
+
+class BochaExternalSearchTests(unittest.TestCase):
+    def _search(self, body: dict, top_k: int = 2):
+        from rag_upgrade.external_search import BochaExternalSearch
+
+        response = MagicMock()
+        response.read.return_value = json.dumps(body).encode("utf-8")
+        response.__enter__.return_value = response
+        with patch.dict(os.environ, {"BOCHA_API_KEY": "test-key"}), \
+                patch("urllib.request.urlopen", return_value=response) as urlopen:
+            search = BochaExternalSearch()
+            hits = search.search("雇主责任险", top_k=top_k)
+        return search, hits, urlopen.call_args[0][0]
+
+    def test_parses_web_pages_and_prefers_summary(self) -> None:
+        body = {"code": 200, "data": {"webPages": {"value": [
+            {"name": "标题1", "url": "https://a.example", "snippet": "片段1", "summary": "摘要1"},
+            {"name": "标题2", "url": "https://b.example", "snippet": "片段2"},
+            {"name": "标题3", "url": "https://c.example", "snippet": "片段3"},
+        ]}}}
+        search, hits, request = self._search(body)
+        self.assertEqual([hit.title for hit in hits], ["标题1", "标题2"])
+        self.assertEqual([hit.content for hit in hits], ["摘要1", "片段2"])
+        self.assertEqual(hits[0].provider, "bocha_web_search")
+        self.assertEqual(request.get_header("Authorization"), "Bearer test-key")
+        self.assertEqual(json.loads(request.data)["count"], 2)
+        self.assertEqual(search.status, "searched")
+
+    def test_api_error_code_returns_no_hits(self) -> None:
+        search, hits, _ = self._search({"code": 401, "msg": "invalid key"})
+        self.assertEqual(hits, [])
+        self.assertIn("401", search.status)
 
 
 class ApiContractTests(unittest.TestCase):
