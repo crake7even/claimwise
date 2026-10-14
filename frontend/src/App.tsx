@@ -3,7 +3,7 @@ import { Sidebar } from "./components/Sidebar";
 import { ChatMessage } from "./components/ChatMessage";
 import { ChatInput } from "./components/ChatInput";
 import type { ChatSession, HealthStatus, Message, SearchMode } from "./types";
-import { describeError, fetchHealth, streamChat, type HistoryTurn } from "./api";
+import { ApiError, describeError, fetchHealth, streamChat, type HistoryTurn } from "./api";
 import {
   createEmptySession,
   createId,
@@ -15,25 +15,20 @@ import {
   sessionHasUserMessage,
   visibleSessions,
 } from "./sessionHistory";
-import { Menu } from "lucide-react";
+import { ArrowDown, BookOpenCheck, Globe, Menu, ShieldCheck, Sparkles, Zap } from "lucide-react";
 
-const welcomeMessage: Message = {
-  id: "welcome",
-  role: "ai",
-  content:
-    "您好！我是您的保险资料智能问答助手。您可以直接向我提问关于保险产品、保障范围、理赔流程等方面的问题。回答会标注引用编号，点击即可查看原文依据。\n\n请问今天有什么我可以帮您的？",
-};
-
-const suggestions: Array<{ text: string; mode: SearchMode }> = [
-  { text: "介绍下雇主责任险", mode: "quick" },
-  { text: "员工喝酒开车出事，意外险赔吗？", mode: "semantic" },
-  { text: "搜索保险行业 AI 最新新闻", mode: "web" },
+const suggestions: Array<{ text: string; mode: SearchMode; tag: string; icon: typeof Zap; tone: string }> = [
+  { text: "介绍下雇主责任险的保障范围", mode: "quick", tag: "快速检索", icon: Zap, tone: "text-amber-600 bg-amber-50" },
+  { text: "员工喝酒开车出事，意外险赔吗？", mode: "semantic", tag: "语义理解", icon: Sparkles, tone: "text-violet-600 bg-violet-50" },
+  { text: "施工保对投保工程有什么要求？", mode: "semantic", tag: "语义理解", icon: Sparkles, tone: "text-violet-600 bg-violet-50" },
+  { text: "保险行业 AI 最新动态", mode: "web", tag: "联网搜索", icon: Globe, tone: "text-sky-600 bg-sky-50" },
 ];
 
 // 多轮对话最多携带的历史消息条数（用户与助手各算一条）
 const HISTORY_MESSAGES = 6;
 // 流式输出时合并渲染的间隔，避免每个分片都触发一次整页重渲染
 const STREAM_FLUSH_MS = 60;
+const HEALTH_RETRY_MS = 10000;
 
 interface SessionState {
   sessions: ChatSession[];
@@ -56,17 +51,29 @@ export default function App() {
   const [health, setHealth] = useState<HealthStatus | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const stickToBottomRef = useRef(true);
+  const [showJump, setShowJump] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
 
   const { sessions, currentSessionId } = sessionState;
   const currentSession = sessions.find((session) => session.id === currentSessionId) ?? sessions[0];
   const currentMessages = currentSession?.messages ?? [];
   const sidebarSessions = useMemo(() => visibleSessions(sessions), [sessions]);
-  const displayedMessages = useMemo(() => [welcomeMessage, ...currentMessages], [currentMessages]);
 
+  // 未连通时每 10 秒探测一次后端（冷启动唤醒、本地服务重启后自动恢复"服务在线"）
   useEffect(() => {
-    fetchHealth().then(setHealth);
-  }, []);
+    if (health) return;
+    let cancelled = false;
+    const probe = () =>
+      fetchHealth().then((result) => {
+        if (!cancelled && result) setHealth(result);
+      });
+    probe();
+    const timer = window.setInterval(probe, HEALTH_RETRY_MS);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, [health]);
 
   // 流式输出期间不写 localStorage，结束后统一保存一次
   useEffect(() => {
@@ -79,7 +86,7 @@ export default function App() {
     if (container && stickToBottomRef.current) {
       container.scrollTop = container.scrollHeight;
     }
-  }, [displayedMessages]);
+  }, [currentMessages]);
 
   useEffect(() => {
     stickToBottomRef.current = true;
@@ -88,7 +95,17 @@ export default function App() {
   const handleScroll = () => {
     const container = scrollRef.current;
     if (!container) return;
-    stickToBottomRef.current = container.scrollHeight - container.scrollTop - container.clientHeight < 80;
+    const nearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 80;
+    stickToBottomRef.current = nearBottom;
+    setShowJump(!nearBottom);
+  };
+
+  const scrollToBottom = () => {
+    const container = scrollRef.current;
+    if (!container) return;
+    stickToBottomRef.current = true;
+    setShowJump(false);
+    container.scrollTo({ top: container.scrollHeight, behavior: "smooth" });
   };
 
   const updateSessionMessages = (sessionId: string, updater: (messages: Message[]) => Message[]) => {
@@ -241,6 +258,8 @@ export default function App() {
         patchAiMessage({ content: content || "已停止生成。", isLoading: false, isStreaming: false, error: content ? "已手动停止生成，回答可能不完整。" : undefined });
       } else {
         patchAiMessage({ content, isLoading: false, isStreaming: false, error: describeError(error) });
+        // 连接失败或网关 5xx（含本地代理在后端未启动时的 500）时，状态标记回"连接中"，由探测逻辑自动重连
+        if (error instanceof TypeError || (error instanceof ApiError && (error.status ?? 0) >= 500)) setHealth(null);
       }
     } finally {
       abortRef.current = null;
@@ -249,7 +268,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-dvh w-full overflow-hidden bg-[#f8f9fb] font-sans text-slate-900">
+    <div className="flex h-dvh w-full overflow-hidden bg-canvas font-sans text-slate-900">
       <Sidebar
         collapsed={sidebarCollapsed}
         mobileOpen={mobileSidebarOpen}
@@ -264,57 +283,92 @@ export default function App() {
         onImport={handleImport}
       />
 
-      <main className="flex min-w-0 flex-1 flex-col transition-all duration-300">
-        <header className="flex h-[64px] shrink-0 items-center gap-3 border-b border-slate-200 bg-white px-4 sm:h-[74px] sm:px-6">
+      <main className="flex min-w-0 flex-1 flex-col">
+        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-slate-200/70 bg-white/80 px-4 backdrop-blur sm:px-6">
           <button
             type="button"
             onClick={() => setMobileSidebarOpen(true)}
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 md:hidden"
+            className="-ml-1 flex h-9 w-9 items-center justify-center rounded-lg text-slate-600 transition-colors hover:bg-slate-100 md:hidden"
             title="打开会话列表"
           >
             <Menu className="h-5 w-5" />
           </button>
-          <div className="min-w-0">
-            <h1 className="truncate text-lg font-bold leading-6 text-slate-950 sm:text-xl">保险资料智能问答系统</h1>
-            <p className="mt-0.5 hidden text-sm text-slate-500 sm:block">面向业务人员的专业保险知识库助手</p>
-          </div>
+          <h1 className="min-w-0 flex-1 truncate text-[15px] font-semibold text-slate-900">
+            {currentMessages.length > 0 ? currentSession?.title : "保险资料智能问答"}
+          </h1>
+          <span
+            className={`flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium ring-1 ${
+              health ? "bg-emerald-50 text-emerald-700 ring-emerald-200/70" : "bg-slate-50 text-slate-500 ring-slate-200"
+            }`}
+            title={health ? "后端服务已连接" : "正在连接后端服务，首次访问可能需要唤醒"}
+          >
+            <span className={`h-1.5 w-1.5 rounded-full ${health ? "bg-emerald-500" : "animate-pulse bg-slate-400"}`} />
+            {health ? "服务在线" : "连接中"}
+          </span>
         </header>
 
-        <section className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-[#f6f7f9]">
-          <div ref={scrollRef} onScroll={handleScroll} className="min-h-0 flex-1 overflow-y-auto px-4 py-6 sm:px-8 sm:py-8">
-            <div className="mx-auto flex w-full max-w-[980px] flex-col gap-5">
+        <section className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
+          <div ref={scrollRef} onScroll={handleScroll} className="scroll-thin min-h-0 flex-1 overflow-y-auto px-4 sm:px-6">
+            <div className="mx-auto flex w-full max-w-[760px] flex-col gap-6 py-6 sm:py-10">
               {notice && (
-                <div className="rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-medium text-blue-700 sm:ml-14">
-                  {notice}
-                </div>
+                <div className="animate-fade rounded-xl bg-brand-50 px-4 py-3 text-sm text-brand-800 ring-1 ring-brand-100">{notice}</div>
               )}
 
-              {displayedMessages.map((msg) => (
-                <ChatMessage key={msg.id} message={msg} />
-              ))}
-
-              {currentMessages.length === 0 && (
-                <div className="grid grid-cols-1 gap-3 sm:ml-14 sm:grid-cols-3 sm:gap-4">
-                  {suggestions.map((item) => (
-                    <button
-                      key={item.text}
-                      onClick={() => handleSend(item.text, item.mode)}
-                      className="min-h-14 rounded-xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-medium leading-5 text-slate-800 transition-colors hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
-                    >
-                      {item.text}
-                    </button>
-                  ))}
+              {currentMessages.length === 0 ? (
+                <div className="flex animate-rise flex-col items-center pt-4 text-center sm:pt-12">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-lg shadow-brand-500/30">
+                    <ShieldCheck className="h-7 w-7" />
+                  </div>
+                  <h2 className="mt-5 text-2xl font-semibold tracking-tight text-slate-900 sm:text-[28px]">有什么保险问题想问？</h2>
+                  <p className="mt-2 max-w-md text-sm leading-6 text-slate-500">
+                    基于雇主责任险、团体意外险、施工保等产品资料作答，每个结论都标注原文出处。
+                  </p>
+                  <div className="mt-8 grid w-full grid-cols-1 gap-2.5 text-left sm:grid-cols-2 sm:gap-3">
+                    {suggestions.map(({ text, mode, tag, icon: Icon, tone }) => (
+                      <button
+                        key={text}
+                        type="button"
+                        onClick={() => handleSend(text, mode)}
+                        className="group flex items-start gap-3 rounded-2xl bg-white p-4 text-left shadow-soft ring-1 ring-slate-200/70 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-float hover:ring-brand-200 active:translate-y-0"
+                      >
+                        <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${tone}`}>
+                          <Icon className="h-4 w-4" />
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block text-sm font-medium leading-6 text-slate-800 group-hover:text-brand-700">{text}</span>
+                          <span className="mt-0.5 block text-xs text-slate-400">{tag}</span>
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="mt-8 flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs text-slate-400">
+                    <span className="flex items-center gap-1.5"><BookOpenCheck className="h-3.5 w-3.5" />引用可溯源</span>
+                    <span className="flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5" />支持多轮追问</span>
+                    <span className="flex items-center gap-1.5"><Globe className="h-3.5 w-3.5" />可联网补充</span>
+                  </div>
                 </div>
+              ) : (
+                currentMessages.map((msg) => <ChatMessage key={msg.id} message={msg} serviceConnected={health !== null} />)
               )}
             </div>
           </div>
 
-          <div className="shrink-0 border-t border-slate-200 bg-white/72 px-3 py-3 backdrop-blur sm:px-8 sm:py-4">
-            <div className="mx-auto w-full max-w-[980px]">
+          {showJump && currentMessages.length > 0 && (
+            <button
+              type="button"
+              onClick={scrollToBottom}
+              className="absolute bottom-[132px] left-1/2 z-10 flex h-9 w-9 -translate-x-1/2 animate-fade items-center justify-center rounded-full bg-white text-slate-600 shadow-float ring-1 ring-slate-200 transition-colors hover:text-brand-700"
+              title="回到底部"
+            >
+              <ArrowDown className="h-4 w-4" />
+            </button>
+          )}
+
+          <div className="relative shrink-0 px-3 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-6 sm:pb-5">
+            <div className="pointer-events-none absolute inset-x-0 -top-8 h-8 bg-gradient-to-t from-canvas to-transparent" />
+            <div className="mx-auto w-full max-w-[760px]">
               <ChatInput onSend={handleSend} onStop={handleStop} isProcessing={isProcessing} health={health} />
-              <p className="mt-2 text-center text-xs text-slate-500 sm:mt-3">
-                AI 生成的内容仅供参考，不作为最终承保或理赔结论。
-              </p>
+              <p className="mt-2 text-center text-[11px] text-slate-400">AI 生成内容仅供参考，不作为最终承保或理赔结论。</p>
             </div>
           </div>
         </section>
