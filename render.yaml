@@ -2,7 +2,7 @@ services:
   - type: web
     name: insurance-rag-api
     runtime: python
-    buildCommand: cd backend && pip install -r requirements.txt
+    buildCommand: cd backend && pip install -r requirements.txt && python scripts/build_embeddings.py
     startCommand: cd backend && uvicorn api_server:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /api/health
     envVars:
@@ -24,12 +24,22 @@ services:
         value: text-embedding-v4
       - key: EMBEDDING_DIMENSIONS
         value: "1024"
+      - key: RAG_CHUNK_STRATEGY
+        value: structured
       - key: RAG_CHUNK_SIZE
-        value: "1200"
+        value: "400"
       - key: RAG_CHUNK_OVERLAP
-        value: "180"
+        value: "60"
       - key: RAG_TOP_K
         value: "6"
+      - key: RAG_BM25_B
+        value: "0.5"
+      - key: ENABLE_RERANK
+        value: "true"
+      - key: RERANK_MODEL
+        value: qwen3.7-text-rerank
+      - key: RERANK_MIN_SCORE
+        value: "0.5"
       - key: BOCHA_API_URL
         value: https://api.bochaai.com/v1/web-search
       - key: BOCHA_FRESHNESS

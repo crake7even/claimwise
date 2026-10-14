@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import math
 import os
+import threading
 from pathlib import Path
 
 from openai import OpenAI
@@ -27,6 +28,9 @@ class EmbeddingRetriever:
         self.status = "disabled"
         self.enabled = bool(os.getenv("DASHSCOPE_API_KEY", "").strip())
         self._vectors: dict[str, list[float]] = {}
+        self._ready = False
+        self._query_cache: dict[str, list[float]] = {}
+        self._lock = threading.Lock()
         if self.enabled:
             self.status = "ready"
 
@@ -71,10 +75,25 @@ class EmbeddingRetriever:
         if not self.enabled:
             self.status = "DASHSCOPE_API_KEY is missing"
             return False
+        if self._ready:
+            return True
+        with self._lock:
+            if self._ready:
+                return True
+            return self._build_index(batch_size)
+
+    def _build_index(self, batch_size: int) -> bool:
         self._load_cache()
+        current_ids = {chunk.id for chunk in self.chunks}
+        stale = [key for key in self._vectors if key not in current_ids]
+        for key in stale:
+            self._vectors.pop(key)
         missing = [chunk for chunk in self.chunks if chunk.id not in self._vectors]
         if not missing:
+            if stale:
+                self._save_cache()
             self.status = f"loaded {len(self._vectors)} embeddings"
+            self._ready = True
             return True
 
         try:
@@ -85,6 +104,7 @@ class EmbeddingRetriever:
                     self._vectors[chunk.id] = vector
             self._save_cache()
             self.status = f"indexed {len(self._vectors)} embeddings"
+            self._ready = True
             return True
         except Exception as exc:
             self.status = f"embedding failed: {type(exc).__name__}: {exc}"
@@ -99,13 +119,26 @@ class EmbeddingRetriever:
             return 0.0
         return dot / (left_norm * right_norm)
 
+    def embed_query(self, query: str) -> list[float] | None:
+        """查询向量带缓存，可提前调用预热（与查询改写并行）。"""
+        cached = self._query_cache.get(query)
+        if cached is not None:
+            return cached
+        try:
+            vector = self._embed([query])[0]
+        except Exception as exc:
+            self.status = f"query embedding failed: {type(exc).__name__}: {exc}"
+            return None
+        if len(self._query_cache) >= 256:
+            self._query_cache.pop(next(iter(self._query_cache)))
+        self._query_cache[query] = vector
+        return vector
+
     def search(self, query: str, top_k: int = 5) -> list[RetrievalHit]:
         if not self.ensure_index():
             return []
-        try:
-            query_vector = self._embed([query])[0]
-        except Exception as exc:
-            self.status = f"query embedding failed: {type(exc).__name__}: {exc}"
+        query_vector = self.embed_query(query)
+        if query_vector is None:
             return []
 
         hits: list[RetrievalHit] = []
@@ -122,6 +155,7 @@ class EmbeddingRetriever:
                 content=chunk.content,
                 score=score,
                 retriever="qwen_embedding",
+                section=chunk.section,
             ))
         hits.sort(key=lambda item: item.score, reverse=True)
         return hits[:top_k]

@@ -84,6 +84,7 @@ class ElasticsearchHTTPRetriever:
                     "file_name": {"type": "keyword"},
                     "source": {"type": "keyword"},
                     "chunk_id": {"type": "integer"},
+                    "section": {"type": "keyword"},
                 }
             }
         }
@@ -116,6 +117,7 @@ class ElasticsearchHTTPRetriever:
                 "file_name": chunk.file_name,
                 "source": chunk.source,
                 "chunk_id": chunk.chunk_id,
+                "section": chunk.section,
             }, ensure_ascii=False))
         try:
             self._request("POST", "/_bulk?refresh=true", "\n".join(lines) + "\n")
@@ -156,6 +158,7 @@ class ElasticsearchHTTPRetriever:
                 content=source.get("content", ""),
                 score=float(item.get("_score") or 0.0),
                 retriever="elasticsearch_bm25",
+                section=source.get("section", ""),
             ))
         return hits
 
