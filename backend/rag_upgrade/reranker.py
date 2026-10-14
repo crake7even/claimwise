@@ -2,8 +2,12 @@ from __future__ import annotations
 
 import json
 import os
+import time
 import urllib.error
 import urllib.request
+
+RETRIES = 2
+RETRY_DELAY_SECONDS = 1.0
 
 
 class DashScopeReranker:
@@ -34,15 +38,26 @@ class DashScopeReranker:
             headers={"Content-Type": "application/json", "Authorization": f"Bearer {self.api_key}"},
             method="POST",
         )
-        try:
-            with urllib.request.urlopen(request, timeout=20) as response:
-                body = json.loads(response.read().decode("utf-8"))
-        except urllib.error.HTTPError as exc:
-            self.status = f"rerank HTTP {exc.code}"
-            return None
-        except Exception as exc:
-            self.status = f"rerank failed: {type(exc).__name__}: {exc}"
-            return None
+        body = None
+        for attempt in range(RETRIES + 1):
+            try:
+                with urllib.request.urlopen(request, timeout=20) as response:
+                    body = json.loads(response.read().decode("utf-8"))
+                break
+            except urllib.error.HTTPError as exc:
+                # 4xx 为请求或鉴权问题，重试无意义；5xx 视为服务端暂时故障
+                self.status = f"rerank HTTP {exc.code}"
+                if exc.code < 500 or attempt == RETRIES:
+                    return None
+            except (urllib.error.URLError, TimeoutError, OSError) as exc:
+                # DNS 解析失败、握手超时等网络抖动，短暂等待后重试
+                self.status = f"rerank failed: {type(exc).__name__}: {exc}"
+                if attempt == RETRIES:
+                    return None
+            except Exception as exc:
+                self.status = f"rerank failed: {type(exc).__name__}: {exc}"
+                return None
+            time.sleep(RETRY_DELAY_SECONDS)
         results = (body.get("output") or {}).get("results") or []
         self.status = "ready"
         return [(int(item["index"]), float(item["relevance_score"])) for item in results]

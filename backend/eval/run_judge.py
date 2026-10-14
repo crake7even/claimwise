@@ -26,6 +26,9 @@ BACKEND_DIR = Path(__file__).resolve().parents[1]
 EVAL_DIR = BACKEND_DIR / "eval"
 sys.path.insert(0, str(BACKEND_DIR))
 
+# 失败样本占比超过该值时整次评测视为无效（通常是网络或接口故障），避免用残缺样本得出结论
+MAX_FAILED_RATIO = 0.05
+
 JUDGE_PROMPT = """你是严格的保险问答评测员。根据【参考资料】评估【回答】，只输出 JSON，不要输出其他内容。
 
 字段：
@@ -179,6 +182,10 @@ def main() -> int:
     print(f"[{summary['name']}] n={summary['n']} failed={summary['failed']} 覆盖率={summary['key_point_coverage']:.3f} "
           f"忠实度={summary['faithfulness']:.3f} 误拒率={summary['false_refusal_rate']:.3f} "
           f"库外处理准确率={summary['oos_refusal_accuracy']:.3f}")
+    if summary["failed"] > MAX_FAILED_RATIO * summary["n"]:
+        print(f"无效：失败 {summary['failed']}/{summary['n']} 超过 {MAX_FAILED_RATIO:.0%}，多为网络或接口问题，请排查后重跑",
+              file=sys.stderr)
+        return 1
     return 0
 
 
@@ -187,7 +194,8 @@ def render(summary: dict, results: list[dict]) -> str:
         f"# 生成质量评测：{summary['name']}",
         "",
         f"- 生成模型：`{summary['chat_model']}`；裁判模型：`{summary['judge_model']}`；mode：`{summary['mode']}`；split：`{summary['split']}`",
-        f"- 样本：{summary['n']}（失败 {summary['failed']}）",
+        f"- 样本：{summary['n']}（失败 {summary['failed']}）"
+        + ("  **⚠️ 失败率超过阈值，本报告无效**" if summary["failed"] > MAX_FAILED_RATIO * summary["n"] else ""),
         "",
         "| 指标 | 值 |",
         "|---|---|",
