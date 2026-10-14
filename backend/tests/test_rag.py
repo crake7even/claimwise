@@ -75,11 +75,11 @@ class DocumentLoadingTests(unittest.TestCase):
         self.assertEqual({chunk.file_name for chunk in chunks}, {"ok.txt"})
         self.assertEqual(len(logs.records), 2)
 
-    def test_real_corpus_only_skips_scanned_amazon_pdf(self) -> None:
+    def test_real_corpus_loads_every_document(self) -> None:
         with patch.dict(os.environ, OFFLINE_ENV, clear=False):
             service = HybridRagService()
         skipped = [doc["file"] for doc in service.documents if doc["status"] != "loaded"]
-        self.assertEqual(skipped, ["平安商业综合责任保险（亚马逊）.pdf"])
+        self.assertEqual(skipped, [])
 
 
 class BochaExternalSearchTests(unittest.TestCase):
