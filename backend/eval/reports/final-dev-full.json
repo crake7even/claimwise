@@ -1,0 +1,3713 @@
+{
+  "summary": {
+    "name": "final-dev-full",
+    "split": "dev",
+    "mode": "full",
+    "online": true,
+    "retrievers": {
+      "docs_dir": "/Users/yuzhaodai/Documents/Crake/claimwise/backend/docs",
+      "chunks": 149,
+      "documents_loaded": 12,
+      "documents_skipped": [
+        "平安商业综合责任保险（亚马逊）.pdf"
+      ],
+      "local_bm25": "ready",
+      "elasticsearch": "disabled",
+      "embedding": "loaded 149 embeddings",
+      "external_search": "ready",
+      "rerank": "ready"
+    },
+    "overall": {
+      "n": 136,
+      "hit1": 0.8676,
+      "recall5": 0.9706,
+      "recall_budget": 0.9853,
+      "mrr10": 0.9259
+    },
+    "by_category": {
+      "compare": {
+        "n": 24,
+        "hit1": 0.9583,
+        "recall5": 0.875,
+        "recall_budget": 0.9583,
+        "mrr10": 0.9722
+      },
+      "fact": {
+        "n": 64,
+        "hit1": 0.9062,
+        "recall5": 1.0,
+        "recall_budget": 1.0,
+        "mrr10": 0.9505
+      },
+      "paraphrase": {
+        "n": 32,
+        "hit1": 0.7812,
+        "recall5": 0.9688,
+        "recall_budget": 0.9688,
+        "mrr10": 0.8672
+      },
+      "procedure": {
+        "n": 16,
+        "hit1": 0.75,
+        "recall5": 1.0,
+        "recall_budget": 1.0,
+        "mrr10": 0.875
+      }
+    },
+    "score_distribution": {
+      "in_scope_top1": {
+        "p10": 0.8669,
+        "median": 0.9762
+      },
+      "out_of_scope_top1": {
+        "median": 0.5454,
+        "p90": 0.9208,
+        "n": 24
+      }
+    },
+    "latency_ms": {
+      "p50": 4055.73,
+      "p95": 4694.78
+    }
+  },
+  "results": [
+    {
+      "id": "F001",
+      "category": "fact",
+      "question": "亚马逊要求哪些卖家必须投保商业综合责任保险？",
+      "rewritten": "亚马逊要求哪些卖家必须投保商业综合责任保险",
+      "top_score": 0.9998,
+      "latency_ms": 5073.2,
+      "top3": [
+        "1-平安商业综合责任保险（亚马逊）#0",
+        "1-平安商业综合责任保险（亚马逊）#1",
+        "1-平安商业综合责任保险（亚马逊）#2"
+      ],
+      "expected": [
+        "1-平安商业综合责任保险（亚马逊）:10000美元"
+      ],
+      "hit1": false,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 0.5,
+      "first_rank": 2,
+      "found_at": [
+        2
+      ]
+    },
+    {
+      "id": "F002",
+      "category": "fact",
+      "question": "平安亚马逊商业综合责任险的责任限额和免赔额是多少？",
+      "rewritten": "平安亚马逊商业综合责任险责任限额免赔额",
+      "top_score": 1.0,
+      "latency_ms": 3616.69,
+      "top3": [
+        "1-平安商业综合责任保险（亚马逊）#3",
+        "1-平安商业综合责任保险（亚马逊）#4",
+        "平安企业团体综合意外险(互联网版)适用条款#17"
+      ],
+      "expected": [
+        "1-平安商业综合责任保险（亚马逊）:责任限额"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F003",
+      "category": "fact",
+      "question": "亚马逊商业综合责任险的保费怎么收？",
+      "rewritten": "亚马逊商业综合责任险保费计算方式",
+      "top_score": 0.9847,
+      "latency_ms": 3761.36,
+      "top3": [
+        "1-平安商业综合责任保险（亚马逊）#3",
+        "1-平安商业综合责任保险（亚马逊）#1",
+        "1-平安商业综合责任保险（亚马逊）#0"
+      ],
+      "expected": [
+        "1-平安商业综合责任保险（亚马逊）:保费收取"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F004",
+      "category": "fact",
+      "question": "平安亚马逊责任险方案覆盖多少产品大类？",
+      "rewritten": "平安亚马逊责任险方案覆盖多少产品大类",
+      "top_score": 1.0,
+      "latency_ms": 3565.13,
+      "top3": [
+        "1-平安商业综合责任保险（亚马逊）#2",
+        "1-平安商业综合责任保险（亚马逊）#3",
+        "1-平安商业综合责任保险（亚马逊）#0"
+      ],
+      "expected": [
+        "1-平安商业综合责任保险（亚马逊）:195个"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F006",
+      "category": "fact",
+      "question": "亚马逊责任险承保成功后卖家能拿到什么文件？",
+      "rewritten": "亚马逊责任险承保成功后卖家获取的证明文件",
+      "top_score": 0.9823,
+      "latency_ms": 3894.83,
+      "top3": [
+        "1-平安商业综合责任保险（亚马逊）#2",
+        "1-平安商业综合责任保险（亚马逊）#4",
+        "1-平安商业综合责任保险（亚马逊）#3"
+      ],
+      "expected": [
+        "1-平安商业综合责任保险（亚马逊）:英文保单"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F007",
+      "category": "fact",
+      "question": "亚马逊商业综合责任险保障哪些责任？",
+      "rewritten": "亚马逊商业综合责任险 保障范围",
+      "top_score": 0.9484,
+      "latency_ms": 4216.52,
+      "top3": [
+        "1-平安商业综合责任保险（亚马逊）#2",
+        "1-平安商业综合责任保险（亚马逊）#3",
+        "1-平安商业综合责任保险（亚马逊）#0"
+      ],
+      "expected": [
+        "1-平安商业综合责任保险（亚马逊）:产品和完工责任"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F008",
+      "category": "fact",
+      "question": "雇主责任险的保障范围有哪些？C款有什么不赔？",
+      "rewritten": "雇主责任险C款保障范围及免责条款",
+      "top_score": 0.9968,
+      "latency_ms": 4219.46,
+      "top3": [
+        "2-雇主责任险#1",
+        "2-雇主责任险#2",
+        "4-雇主安心保#1"
+      ],
+      "expected": [
+        "2-雇主责任险:C款不赔"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F009",
+      "category": "fact",
+      "question": "雇主责任险的保费由哪些因素决定？",
+      "rewritten": "雇主责任险保费影响因素",
+      "top_score": 0.9866,
+      "latency_ms": 3989.39,
+      "top3": [
+        "2-雇主责任险#5",
+        "2-雇主责任险#2",
+        "4-雇主安心保#1"
+      ],
+      "expected": [
+        "2-雇主责任险:决定保费"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F011",
+      "category": "fact",
+      "question": "雇主责任险的保费可以税前列支吗？",
+      "rewritten": "雇主责任险保费税前列支",
+      "top_score": 0.8611,
+      "latency_ms": 4190.81,
+      "top3": [
+        "4-雇主安心保#2",
+        "2-雇主责任险#1",
+        "2-雇主责任险#5"
+      ],
+      "expected": [
+        "2-雇主责任险:税前列支"
+      ],
+      "hit1": false,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 0.5,
+      "first_rank": 2,
+      "found_at": [
+        2
+      ]
+    },
+    {
+      "id": "F012",
+      "category": "fact",
+      "question": "雇主责任险的医疗费用中哪些药品不赔？",
+      "rewritten": "雇主责任险条款中不赔付的药品范围",
+      "top_score": 0.9627,
+      "latency_ms": 4577.84,
+      "top3": [
+        "2-雇主责任险#8",
+        "平安企业团体综合意外险(互联网版)适用条款#16",
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#8"
+      ],
+      "expected": [
+        "2-雇主责任险:非医保用药"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F013",
+      "category": "fact",
+      "question": "雇主责任险条款中的雇员是怎么定义的？",
+      "rewritten": "雇主责任险条款中雇员的定义",
+      "top_score": 0.9979,
+      "latency_ms": 3917.42,
+      "top3": [
+        "2-雇主责任险#7",
+        "2-雇主责任险#2",
+        "4-雇主安心保#3"
+      ],
+      "expected": [
+        "2-雇主责任险:年满十六周岁"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F014",
+      "category": "fact",
+      "question": "雇主责任险理赔案例中电工王某最终赔了多少？",
+      "rewritten": "雇主责任险 电工王某 理赔金额",
+      "top_score": 0.9906,
+      "latency_ms": 3545.31,
+      "top3": [
+        "2-雇主责任险#8",
+        "4-雇主安心保#3",
+        "2-雇主责任险#0"
+      ],
+      "expected": [
+        "2-雇主责任险:7级伤残"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F016",
+      "category": "fact",
+      "question": "团体意外险的疾病身故有等待期吗？",
+      "rewritten": "团体意外险疾病身故等待期",
+      "top_score": 0.9731,
+      "latency_ms": 3833.55,
+      "top3": [
+        "3-平安企业团体综合意外险#9",
+        "3-平安企业团体综合意外险#4",
+        "平安附加疾病身故保险条款#3"
+      ],
+      "expected": [
+        "3-平安企业团体综合意外险:30天等待期"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F017",
+      "category": "fact",
+      "question": "团体意外险的意外医疗怎么报销？",
+      "rewritten": "团体意外险意外医疗报销流程",
+      "top_score": 0.9172,
+      "latency_ms": 3929.96,
+      "top3": [
+        "3-平安企业团体综合意外险#3",
+        "3-平安企业团体综合意外险#9",
+        "平安企业团体综合意外险(互联网版)适用条款#6"
+      ],
+      "expected": [
+        "3-平安企业团体综合意外险:超过人民币100元"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F018",
+      "category": "fact",
+      "question": "企业团体综合意外险的保险期限有哪些选择？",
+      "rewritten": "企业团体综合意外险保险期限",
+      "top_score": 0.9998,
+      "latency_ms": 4287.12,
+      "top3": [
+        "3-平安企业团体综合意外险#0",
+        "平安企业团体综合意外险(互联网版)适用条款#18",
+        "平安企业团体综合意外险(互联网版)适用条款#35"
+      ],
+      "expected": [
+        "3-平安企业团体综合意外险:6个月、12个月可选"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F019",
+      "category": "fact",
+      "question": "团体意外险的一般意外身故伤残保额范围是多少？",
+      "rewritten": "团体意外险一般意外身故伤残保额范围",
+      "top_score": 0.987,
+      "latency_ms": 4694.78,
+      "top3": [
+        "3-平安企业团体综合意外险#2",
+        "5-施工保#4",
+        "3-平安企业团体综合意外险#3"
+      ],
+      "expected": [
+        "3-平安企业团体综合意外险:5-60万元"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F021",
+      "category": "fact",
+      "question": "团体意外险火车意外保额是多少？包括地铁吗？",
+      "rewritten": "团体意外险火车意外身故伤残保额及是否包含地铁",
+      "top_score": 0.9843,
+      "latency_ms": 3753.01,
+      "top3": [
+        "3-平安企业团体综合意外险#2",
+        "3-平安企业团体综合意外险#1",
+        "3-平安企业团体综合意外险#4"
+      ],
+      "expected": [
+        "3-平安企业团体综合意外险:火车（含地铁）"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F022",
+      "category": "fact",
+      "question": "团体意外险的私家车意外保障适用哪些车辆？",
+      "rewritten": "团体意外险私家车意外保障适用车辆范围",
+      "top_score": 0.9364,
+      "latency_ms": 4127.8,
+      "top3": [
+        "3-平安企业团体综合意外险#5",
+        "3-平安企业团体综合意外险#9",
+        "3-平安企业团体综合意外险#1"
+      ],
+      "expected": [
+        "3-平安企业团体综合意外险:5座位以下非营运车辆"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F023",
+      "category": "fact",
+      "question": "团体意外险承保哪些职业类别？",
+      "rewritten": "团体意外险承保的职业类别范围",
+      "top_score": 0.951,
+      "latency_ms": 4548.68,
+      "top3": [
+        "3-平安企业团体综合意外险#8",
+        "平安企业团体综合意外险(互联网版)适用条款#32",
+        "平安企业团体综合意外险(互联网版)适用条款#21"
+      ],
+      "expected": [
+        "3-平安企业团体综合意外险:1-4类职业"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F024",
+      "category": "fact",
+      "question": "雇主安心保的赔偿范围有哪些？",
+      "rewritten": "雇主安心保 保险责任 赔偿范围",
+      "top_score": 1.0,
+      "latency_ms": 4054.1,
+      "top3": [
+        "4-雇主安心保#1",
+        "2-雇主责任险#1",
+        "4-雇主安心保#3"
+      ],
+      "expected": [
+        "4-雇主安心保:雇主安心保赔偿范围"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F026",
+      "category": "fact",
+      "question": "雇主安心保案例中餐饮公司员工上班途中车祸身故赔了多少？",
+      "rewritten": "雇主安心保 餐饮公司 员工 上班途中 车祸身故 赔付金额",
+      "top_score": 0.9978,
+      "latency_ms": 4174.56,
+      "top3": [
+        "4-雇主安心保#3",
+        "3-平安企业团体综合意外险#3",
+        "4-雇主安心保#1"
+      ],
+      "expected": [
+        "4-雇主安心保:张某"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F027",
+      "category": "fact",
+      "question": "雇主安心保案例中空调安装工坠楼身故赔了多少？",
+      "rewritten": "雇主安心保 空调安装工 坠楼身故 赔付金额",
+      "top_score": 0.9983,
+      "latency_ms": 4027.93,
+      "top3": [
+        "4-雇主安心保#3",
+        "5-施工保#5",
+        "3-平安企业团体综合意外险#2"
+      ],
+      "expected": [
+        "4-雇主安心保:黄某"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F028",
+      "category": "fact",
+      "question": "施工保对投保工程有什么要求？",
+      "rewritten": "施工保投保工程要求",
+      "top_score": 1.0,
+      "latency_ms": 4074.98,
+      "top3": [
+        "5-施工保#3",
+        "5-施工保#6",
+        "5-施工保#8"
+      ],
+      "expected": [
+        "5-施工保:工程造价：50万至1亿元"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F029",
+      "category": "fact",
+      "question": "施工保的员工意外保障有哪些档位？",
+      "rewritten": "施工保员工意外保障有哪些档位",
+      "top_score": 0.9991,
+      "latency_ms": 4115.86,
+      "top3": [
+        "5-施工保#4",
+        "3-平安企业团体综合意外险#2",
+        "5-施工保#1"
+      ],
+      "expected": [
+        "5-施工保:保员工"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F031",
+      "category": "fact",
+      "question": "平安施工保保障哪几部分？",
+      "rewritten": "平安施工保保障范围",
+      "top_score": 1.0,
+      "latency_ms": 4242.84,
+      "top3": [
+        "5-施工保#1",
+        "5-施工保#4",
+        "5-施工保#2"
+      ],
+      "expected": [
+        "5-施工保:工程自身"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F032",
+      "category": "fact",
+      "question": "施工保适用哪些工程类型？",
+      "rewritten": "施工保适用哪些工程类型",
+      "top_score": 0.9997,
+      "latency_ms": 4142.88,
+      "top3": [
+        "5-施工保#3",
+        "5-施工保#6",
+        "5-施工保#5"
+      ],
+      "expected": [
+        "5-施工保:管网类"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F033",
+      "category": "fact",
+      "question": "施工保的工程保额怎么确定？",
+      "rewritten": "施工保工程保额如何确定",
+      "top_score": 0.9853,
+      "latency_ms": 4262.81,
+      "top3": [
+        "5-施工保#4",
+        "5-施工保#3",
+        "5-施工保#2"
+      ],
+      "expected": [
+        "5-施工保:保额等于工程造价"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F034",
+      "category": "fact",
+      "question": "施工保台风理赔案例赔了多少？",
+      "rewritten": "施工保台风理赔案例赔付金额",
+      "top_score": 0.9985,
+      "latency_ms": 4010.2,
+      "top3": [
+        "5-施工保#5",
+        "5-施工保#4",
+        "2-雇主责任险#8"
+      ],
+      "expected": [
+        "5-施工保:32.5万元"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F036",
+      "category": "fact",
+      "question": "为什么施工方需要买施工保？",
+      "rewritten": "施工方购买建筑工程一切险的必要性",
+      "top_score": 1.0,
+      "latency_ms": 4109.11,
+      "top3": [
+        "5-施工保#0",
+        "5-施工保#1",
+        "7-平安装修保#0"
+      ],
+      "expected": [
+        "5-施工保:安监局要求"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F037",
+      "category": "fact",
+      "question": "财产一切险保障哪些风险？",
+      "rewritten": "财产一切险条款保障哪些风险",
+      "top_score": 0.9764,
+      "latency_ms": 4295.28,
+      "top3": [
+        "6-财产一切险#0",
+        "6-财产一切险#1",
+        "6-财产一切险#2"
+      ],
+      "expected": [
+        "6-财产一切险:保障范围"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F038",
+      "category": "fact",
+      "question": "财产一切险适合什么类型的客户？",
+      "rewritten": "财产一切险适用客户类型",
+      "top_score": 0.9632,
+      "latency_ms": 4022.69,
+      "top3": [
+        "6-财产一切险#0",
+        "6-财产一切险#2",
+        "6-财产一切险#1"
+      ],
+      "expected": [
+        "6-财产一切险:所有权、占有权"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F039",
+      "category": "fact",
+      "question": "财产一切险商场大火案例赔了多少？",
+      "rewritten": "财产一切险 商场火灾 理赔案例",
+      "top_score": 1.0,
+      "latency_ms": 4348.36,
+      "top3": [
+        "6-财产一切险#2",
+        "6-财产一切险#0",
+        "6-财产一切险#3"
+      ],
+      "expected": [
+        "6-财产一切险:4000万"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F041",
+      "category": "fact",
+      "question": "交通出行意外险可以承保哪些意外事故类型？",
+      "rewritten": "交通出行意外险承保哪些意外事故类型",
+      "top_score": 1.0,
+      "latency_ms": 4316.83,
+      "top3": [
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#0",
+        "平安产险交通工具意外伤害保险（互联网版）条款#4",
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#2"
+      ],
+      "expected": [
+        "平安产险交通出行意外伤害保险（互联网版）产品说明:驾驶意外"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F042",
+      "category": "fact",
+      "question": "交通出行意外险的必选责任是什么？",
+      "rewritten": "交通出行意外险 必选责任",
+      "top_score": 0.9998,
+      "latency_ms": 4378.28,
+      "top3": [
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#3",
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#2",
+        "平安产险交通工具意外伤害保险（互联网版）条款#4"
+      ],
+      "expected": [
+        "平安产险交通出行意外伤害保险（互联网版）产品说明:必选责任：身故保险责任"
+      ],
+      "hit1": false,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 0.5,
+      "first_rank": 2,
+      "found_at": [
+        2
+      ]
+    },
+    {
+      "id": "F043",
+      "category": "fact",
+      "question": "交通出行意外险能只买可选责任吗？",
+      "rewritten": "交通出行意外险是否可仅投保可选责任",
+      "top_score": 1.0,
+      "latency_ms": 4243.63,
+      "top3": [
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#1",
+        "平安产险交通工具意外伤害保险（互联网版）条款#3",
+        "平安企业团体综合意外险(互联网版)适用条款#3"
+      ],
+      "expected": [
+        "平安产险交通出行意外伤害保险（互联网版）产品说明:则不可单独投保"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F044",
+      "category": "fact",
+      "question": "交通出行意外险退保后多久到账？",
+      "rewritten": "交通出行意外险退保后多久到账？",
+      "top_score": 0.9998,
+      "latency_ms": 3689.24,
+      "top3": [
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#9",
+        "平安产险交通工具意外伤害保险（互联网版）条款#14",
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#10"
+      ],
+      "expected": [
+        "平安产险交通出行意外伤害保险（互联网版）产品说明:3-5个工作"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F046",
+      "category": "fact",
+      "question": "交通出行意外险哪些费用不赔？",
+      "rewritten": "交通出行意外险免责条款不赔费用",
+      "top_score": 0.9998,
+      "latency_ms": 4209.97,
+      "top3": [
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#8",
+        "平安产险交通工具意外伤害保险（互联网版）条款#10",
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#7"
+      ],
+      "expected": [
+        "平安产险交通出行意外伤害保险（互联网版）产品说明:营养费、康复费"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F047",
+      "category": "fact",
+      "question": "交通出行意外险的驾驶意外包括临时停车加油的时候吗？",
+      "rewritten": "交通出行意外险驾驶意外是否包含临时停车加油",
+      "top_score": 0.9973,
+      "latency_ms": 3944.04,
+      "top3": [
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#0",
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#2",
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#8"
+      ],
+      "expected": [
+        "平安产险交通出行意外伤害保险（互联网版）产品说明:换胎"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F048",
+      "category": "fact",
+      "question": "交通工具意外险的意外医疗按什么比例赔付？",
+      "rewritten": "交通工具意外险意外医疗赔付比例",
+      "top_score": 0.9837,
+      "latency_ms": 4347.57,
+      "top3": [
+        "平安产险交通工具意外伤害保险（互联网版）条款#7",
+        "平安产险交通工具意外伤害保险（互联网版）条款#11",
+        "3-平安企业团体综合意外险#9"
+      ],
+      "expected": [
+        "平安产险交通工具意外伤害保险（互联网版）条款:80%的比例"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F049",
+      "category": "fact",
+      "question": "交通工具意外险里的火车包括哪些？",
+      "rewritten": "交通工具意外险中“火车”的定义范围",
+      "top_score": 0.9834,
+      "latency_ms": 4220.79,
+      "top3": [
+        "平安产险交通工具意外伤害保险（互联网版）条款#22",
+        "3-平安企业团体综合意外险#4",
+        "平安企业团体综合意外险(互联网版)适用条款#30"
+      ],
+      "expected": [
+        "平安产险交通工具意外伤害保险（互联网版）条款:【火车】"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F051",
+      "category": "fact",
+      "question": "交通工具意外险达成赔付协议后多久付款？",
+      "rewritten": "交通工具意外险达成赔付协议后多久付款",
+      "top_score": 0.9985,
+      "latency_ms": 4215.0,
+      "top3": [
+        "平安产险交通工具意外伤害保险（互联网版）条款#13",
+        "平安企业团体综合意外险(互联网版)适用条款#18",
+        "平安产险交通工具意外伤害保险（互联网版）条款#4"
+      ],
+      "expected": [
+        "平安产险交通工具意外伤害保险（互联网版）条款:十日内，履行给付保险金义务"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F052",
+      "category": "fact",
+      "question": "交通工具意外险拒赔需要在多久内通知？",
+      "rewritten": "交通工具意外险拒赔通知时效",
+      "top_score": 0.9283,
+      "latency_ms": 4090.75,
+      "top3": [
+        "平安产险交通工具意外伤害保险（互联网版）条款#16",
+        "平安企业团体综合意外险(互联网版)适用条款#22",
+        "平安产险交通工具意外伤害保险（互联网版）条款#13"
+      ],
+      "expected": [
+        "平安产险交通工具意外伤害保险（互联网版）条款:三日内向被保险人发出拒绝"
+      ],
+      "hit1": false,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 0.3333333333333333,
+      "first_rank": 3,
+      "found_at": [
+        3
+      ]
+    },
+    {
+      "id": "F053",
+      "category": "fact",
+      "question": "交通工具意外险60天内定不下赔款数额怎么办？",
+      "rewritten": "交通工具意外险60天内无法确定赔款数额如何处理",
+      "top_score": 0.9954,
+      "latency_ms": 3738.95,
+      "top3": [
+        "平安产险交通工具意外伤害保险（互联网版）条款#13",
+        "平安企业团体综合意外险(互联网版)适用条款#19",
+        "平安产险交通工具意外伤害保险（互联网版）条款#4"
+      ],
+      "expected": [
+        "平安产险交通工具意外伤害保险（互联网版）条款:六十日内"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F054",
+      "category": "fact",
+      "question": "交通工具意外险的如实告知解除权有什么时间限制？",
+      "rewritten": "交通工具意外险 如实告知义务 解除权 除斥期间",
+      "top_score": 0.9986,
+      "latency_ms": 4006.69,
+      "top3": [
+        "平安产险交通工具意外伤害保险（互联网版）条款#15",
+        "平安企业团体综合意外险(互联网版)适用条款#20",
+        "平安产险交通工具意外伤害保险（互联网版）条款#21"
+      ],
+      "expected": [
+        "平安产险交通工具意外伤害保险（互联网版）条款:超过二年的"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F056",
+      "category": "fact",
+      "question": "意外险条款中的医院指什么医院？",
+      "rewritten": "意外险条款中“医院”的定义及资质要求",
+      "top_score": 0.9991,
+      "latency_ms": 3893.83,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#29",
+        "平安产险交通工具意外伤害保险（互联网版）条款#23",
+        "平安产险交通工具意外伤害保险（互联网版）条款#7"
+      ],
+      "expected": [
+        "平安产险交通工具意外伤害保险（互联网版）条款:二级或二级以上的公立医院"
+      ],
+      "hit1": false,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 0.5,
+      "first_rank": 2,
+      "found_at": [
+        2
+      ]
+    },
+    {
+      "id": "F057",
+      "category": "fact",
+      "question": "团体意外险条款对被保险人投保年龄有什么上限？",
+      "rewritten": "团体意外险条款规定被保险人投保年龄上限",
+      "top_score": 0.9762,
+      "latency_ms": 3644.99,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#0",
+        "3-平安企业团体综合意外险#8",
+        "3-平安企业团体综合意外险#0"
+      ],
+      "expected": [
+        "平安企业团体综合意外险(互联网版)适用条款:七十五周岁"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F058",
+      "category": "fact",
+      "question": "意外伤害住院护理津贴最多赔多少天？",
+      "rewritten": "意外伤害住院护理津贴最多赔付天数",
+      "top_score": 0.9763,
+      "latency_ms": 3716.69,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#8",
+        "平安企业团体综合意外险(互联网版)适用条款#9",
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#5"
+      ],
+      "expected": [
+        "平安企业团体综合意外险(互联网版)适用条款:六十天为限"
+      ],
+      "hit1": false,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 0.5,
+      "first_rank": 2,
+      "found_at": [
+        2
+      ]
+    },
+    {
+      "id": "F059",
+      "category": "fact",
+      "question": "团意险条款中的交通意外伤害身故特别保险金怎么给付？",
+      "rewritten": "团意险交通意外伤害身故特别保险金给付方式",
+      "top_score": 0.9742,
+      "latency_ms": 3665.93,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#9",
+        "平安企业团体综合意外险(互联网版)适用条款#10",
+        "平安企业团体综合意外险(互联网版)适用条款#23"
+      ],
+      "expected": [
+        "平安企业团体综合意外险(互联网版)适用条款:交通意外伤害身故特别保险金"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F061",
+      "category": "fact",
+      "question": "闭合性骨折只在门诊治疗怎么赔？",
+      "rewritten": "闭合性骨折门诊治疗理赔",
+      "top_score": 0.9703,
+      "latency_ms": 3761.31,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#11",
+        "平安企业团体综合意外险(互联网版)适用条款#10",
+        "平安企业团体综合意外险(互联网版)适用条款#13"
+      ],
+      "expected": [
+        "平安企业团体综合意外险(互联网版)适用条款:10%的比例给付"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F062",
+      "category": "fact",
+      "question": "锁骨骨折的给付比例是多少？",
+      "rewritten": "XX保险锁骨骨折保险金给付比例",
+      "top_score": 0.984,
+      "latency_ms": 3918.13,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#36",
+        "平安企业团体综合意外险(互联网版)适用条款#11",
+        "平安企业团体综合意外险(互联网版)适用条款#37"
+      ],
+      "expected": [
+        "平安企业团体综合意外险(互联网版)适用条款:锁骨骨折"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F063",
+      "category": "fact",
+      "question": "团意险条款要求出险后多久内通知保险人？",
+      "rewritten": "团意险条款出险后通知保险人的时限",
+      "top_score": 0.9693,
+      "latency_ms": 4264.73,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#22",
+        "平安产险交通工具意外伤害保险（互联网版）条款#16",
+        "3-平安企业团体综合意外险#9"
+      ],
+      "expected": [
+        "平安企业团体综合意外险(互联网版)适用条款:四十八"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F064",
+      "category": "fact",
+      "question": "被保险人换了工作需要通知保险公司吗？",
+      "rewritten": "被保险人变更职业是否需要通知保险公司",
+      "top_score": 0.9668,
+      "latency_ms": 3703.98,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#21",
+        "平安企业团体综合意外险(互联网版)适用条款#22",
+        "平安企业团体综合意外险(互联网版)适用条款#2"
+      ],
+      "expected": [
+        "平安企业团体综合意外险(互联网版)适用条款:变更职业或工种"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F066",
+      "category": "fact",
+      "question": "意外险条款中的一次住院怎么界定？",
+      "rewritten": "意外险条款中“一次住院”的界定标准",
+      "top_score": 1.0,
+      "latency_ms": 4239.07,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#30",
+        "平安企业团体综合意外险(互联网版)适用条款#9",
+        "平安企业团体综合意外险(互联网版)适用条款#8"
+      ],
+      "expected": [
+        "平安企业团体综合意外险(互联网版)适用条款:【一次住院】"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F067",
+      "category": "fact",
+      "question": "骨密度检测津贴同一事故检测多次能赔几次？",
+      "rewritten": "平安e生保长期医疗骨密度检测津贴同一事故多次检测赔付次数",
+      "top_score": 0.9999,
+      "latency_ms": 4235.84,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#14",
+        "平安企业团体综合意外险(互联网版)适用条款#13",
+        "平安企业团体综合意外险(互联网版)适用条款#17"
+      ],
+      "expected": [
+        "平安企业团体综合意外险(互联网版)适用条款:仅给付一次骨密度检测津贴"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F068",
+      "category": "fact",
+      "question": "团意险条款中的客运公共交通工具包括租车吗？",
+      "rewritten": "团意险条款中客运公共交通工具是否包含租车",
+      "top_score": 0.9675,
+      "latency_ms": 3988.37,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#30",
+        "平安企业团体综合意外险(互联网版)适用条款#31",
+        "平安产险交通工具意外伤害保险（互联网版）条款#8"
+      ],
+      "expected": [
+        "平安企业团体综合意外险(互联网版)适用条款:不包括租赁的机动车"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F069",
+      "category": "fact",
+      "question": "境内紧急医疗救援服务在什么情况下适用？",
+      "rewritten": "境内紧急医疗救援服务适用情形",
+      "top_score": 0.9853,
+      "latency_ms": 4215.26,
+      "top3": [
+        "平安境内紧急医疗救援服务条款#1",
+        "平安境内紧急医疗救援服务条款#8",
+        "平安境内紧急医疗救援服务条款#2"
+      ],
+      "expected": [
+        "平安境内紧急医疗救援服务条款:非常住地"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F071",
+      "category": "fact",
+      "question": "救援服务对亲属前往处理后事有什么规定？",
+      "rewritten": "身故后亲属前往处理后事的救援服务规定",
+      "top_score": 0.986,
+      "latency_ms": 4313.84,
+      "top3": [
+        "平安境内紧急医疗救援服务条款#4",
+        "平安境内紧急医疗救援服务条款#14",
+        "平安境内紧急医疗救援服务条款#5"
+      ],
+      "expected": [
+        "平安境内紧急医疗救援服务条款:亲属前往处理后事"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F072",
+      "category": "fact",
+      "question": "被保险人出事后随行未成年子女没人照顾怎么办？",
+      "rewritten": "被保险人出险后未成年子女无人照管，是否提供照护服务？",
+      "top_score": 0.9559,
+      "latency_ms": 4309.57,
+      "top3": [
+        "平安境内紧急医疗救援服务条款#6",
+        "平安境内紧急医疗救援服务条款#7",
+        "平安境内紧急医疗救援服务条款#5"
+      ],
+      "expected": [
+        "平安境内紧急医疗救援服务条款:未成年子女"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F073",
+      "category": "fact",
+      "question": "救援服务递送药品的费用谁承担？",
+      "rewritten": "救援服务中药品配送费用由谁承担",
+      "top_score": 0.9976,
+      "latency_ms": 4085.08,
+      "top3": [
+        "平安境内紧急医疗救援服务条款#10",
+        "平安境内紧急医疗救援服务条款#3",
+        "平安境内紧急医疗救援服务条款#9"
+      ],
+      "expected": [
+        "平安境内紧急医疗救援服务条款:递送的费用需由被保险人自行承担"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F074",
+      "category": "fact",
+      "question": "救援服务条款中的非常住地指什么？",
+      "rewritten": "救援服务条款中非常住地的定义",
+      "top_score": 0.9991,
+      "latency_ms": 4760.55,
+      "top3": [
+        "平安境内紧急医疗救援服务条款#16",
+        "平安境内紧急医疗救援服务条款#1",
+        "平安境内紧急医疗救援服务条款#13"
+      ],
+      "expected": [
+        "平安境内紧急医疗救援服务条款:设区城市以外"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F076",
+      "category": "fact",
+      "question": "附加疾病身故保险的等待期是多久？",
+      "rewritten": "附加疾病身故保险等待期",
+      "top_score": 0.9617,
+      "latency_ms": 3742.46,
+      "top3": [
+        "平安附加疾病身故保险条款#3",
+        "3-平安企业团体综合意外险#9",
+        "平安附加疾病身故保险条款#4"
+      ],
+      "expected": [
+        "平安附加疾病身故保险条款:三十天以后"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F077",
+      "category": "fact",
+      "question": "附加疾病身故保险可以单独购买吗？",
+      "rewritten": "附加疾病身故保险能否单独投保",
+      "top_score": 0.8571,
+      "latency_ms": 4541.59,
+      "top3": [
+        "平安附加疾病身故保险条款#0",
+        "平安附加疾病身故保险条款#1",
+        "平安企业团体综合意外险(互联网版)适用条款#3"
+      ],
+      "expected": [
+        "平安附加疾病身故保险条款:须附加于各种意外伤害保险合同"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F078",
+      "category": "fact",
+      "question": "附加疾病身故保险对意外身故赔吗？",
+      "rewritten": "附加疾病身故保险是否赔付意外身故",
+      "top_score": 0.9263,
+      "latency_ms": 4334.9,
+      "top3": [
+        "平安附加疾病身故保险条款#4",
+        "平安附加疾病身故保险条款#3",
+        "平安附加疾病身故保险条款#5"
+      ],
+      "expected": [
+        "平安附加疾病身故保险条款:因意外伤害事故身故"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "F079",
+      "category": "fact",
+      "question": "附加疾病身故保险合同在什么情况下终止？",
+      "rewritten": "附加疾病身故保险合同终止条件",
+      "top_score": 0.9999,
+      "latency_ms": 3612.86,
+      "top3": [
+        "平安附加疾病身故保险条款#6",
+        "平安附加疾病身故保险条款#3",
+        "平安附加疾病身故保险条款#4"
+      ],
+      "expected": [
+        "平安附加疾病身故保险条款:即行终止"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "P001",
+      "category": "paraphrase",
+      "question": "我在亚马逊一个月卖了一万五美金，平台让我买保险，不买会怎么样？",
+      "rewritten": "亚马逊卖家责任险未购买后果",
+      "top_score": 0.9999,
+      "latency_ms": 4020.65,
+      "top3": [
+        "1-平安商业综合责任保险（亚马逊）#0",
+        "1-平安商业综合责任保险（亚马逊）#1",
+        "1-平安商业综合责任保险（亚马逊）#3"
+      ],
+      "expected": [
+        "1-平安商业综合责任保险（亚马逊）:无法提现"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "P002",
+      "category": "paraphrase",
+      "question": "我们的临时工没签劳动合同，出事了雇主险能赔吗？",
+      "rewritten": "雇主责任险是否赔偿未签劳动合同的临时工",
+      "top_score": 0.9996,
+      "latency_ms": 4154.78,
+      "top3": [
+        "2-雇主责任险#7",
+        "2-雇主责任险#1",
+        "4-雇主安心保#1"
+      ],
+      "expected": [
+        "2-雇主责任险:临时工"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "P003",
+      "category": "paraphrase",
+      "question": "员工下班路上被车撞了，雇主险管不管？",
+      "rewritten": "雇主责任险是否赔偿员工下班途中交通事故",
+      "top_score": 0.9609,
+      "latency_ms": 3931.81,
+      "top3": [
+        "2-雇主责任险#6",
+        "4-雇主安心保#3",
+        "2-雇主责任险#0"
+      ],
+      "expected": [
+        "2-雇主责任险:上下班途中"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "P004",
+      "category": "paraphrase",
+      "question": "我们接了个修桥的活，能买施工保吗？",
+      "rewritten": "修桥工程能否投保建筑工程一切险或安装工程一切险",
+      "top_score": 0.9792,
+      "latency_ms": 3774.38,
+      "top3": [
+        "5-施工保#6",
+        "5-施工保#0",
+        "5-施工保#3"
+      ],
+      "expected": [
+        "5-施工保:桥梁工程"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "P006",
+      "category": "paraphrase",
+      "question": "员工出差坐飞机出了意外，团意险能赔多少？",
+      "rewritten": "团意险员工出差乘坐飞机意外身故伤残赔偿限额",
+      "top_score": 0.9206,
+      "latency_ms": 4608.74,
+      "top3": [
+        "3-平安企业团体综合意外险#2",
+        "3-平安企业团体综合意外险#1",
+        "3-平安企业团体综合意外险#3"
+      ],
+      "expected": [
+        "3-平安企业团体综合意外险:飞机意外"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "P007",
+      "category": "paraphrase",
+      "question": "我店铺一个月在亚马逊只卖了8000美金，也必须买这个责任险吗？",
+      "rewritten": "亚马逊店铺月销8000美元是否必须购买责任险",
+      "top_score": 0.958,
+      "latency_ms": 3990.39,
+      "top3": [
+        "1-平安商业综合责任保险（亚马逊）#0",
+        "1-平安商业综合责任保险（亚马逊）#1",
+        "1-平安商业综合责任保险（亚马逊）#3"
+      ],
+      "expected": [
+        "1-平安商业综合责任保险（亚马逊）:10000美元"
+      ],
+      "hit1": false,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 0.5,
+      "first_rank": 2,
+      "found_at": [
+        2
+      ]
+    },
+    {
+      "id": "P008",
+      "category": "paraphrase",
+      "question": "海外买家说我的产品有问题要起诉，这个保险管律师费吗？",
+      "rewritten": "查询产品是否承保海外买家诉讼产生的律师费",
+      "top_score": 0.8934,
+      "latency_ms": 4575.01,
+      "top3": [
+        "1-平安商业综合责任保险（亚马逊）#2",
+        "1-平安商业综合责任保险（亚马逊）#3",
+        "1-平安商业综合责任保险（亚马逊）#0"
+      ],
+      "expected": [
+        "1-平安商业综合责任保险（亚马逊）:涵盖法律费用"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "P009",
+      "category": "paraphrase",
+      "question": "员工在厂里干久了得了职业病，雇主险能赔吗？",
+      "rewritten": "雇主责任险是否赔偿员工职业病",
+      "top_score": 0.8947,
+      "latency_ms": 4296.52,
+      "top3": [
+        "2-雇主责任险#2",
+        "2-雇主责任险#3",
+        "4-雇主安心保#1"
+      ],
+      "expected": [
+        "2-雇主责任险:职业病"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "P011",
+      "category": "paraphrase",
+      "question": "我给员工买了意外险，出事后还需要我自己赔钱吗？",
+      "rewritten": "员工意外险出险后雇主是否需承担赔偿",
+      "top_score": 0.8497,
+      "latency_ms": 3937.95,
+      "top3": [
+        "2-雇主责任险#1",
+        "2-雇主责任险#3",
+        "3-平安企业团体综合意外险#3"
+      ],
+      "expected": [
+        "2-雇主责任险:88万"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "P012",
+      "category": "paraphrase",
+      "question": "公司已经交了工伤保险，还能再买雇主险吗？",
+      "rewritten": "工伤保险已缴纳，能否购买雇主责任险",
+      "top_score": 0.9871,
+      "latency_ms": 4155.45,
+      "top3": [
+        "2-雇主责任险#5",
+        "2-雇主责任险#4",
+        "2-雇主责任险#1"
+      ],
+      "expected": [
+        "2-雇主责任险:还可不可以购买"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "P013",
+      "category": "paraphrase",
+      "question": "我们有个60岁的老员工，能上团意险吗？",
+      "rewritten": "60岁员工能否投保团体意外险",
+      "top_score": 0.9445,
+      "latency_ms": 4005.08,
+      "top3": [
+        "3-平安企业团体综合意外险#0",
+        "3-平安企业团体综合意外险#8",
+        "平安企业团体综合意外险(互联网版)适用条款#0"
+      ],
+      "expected": [
+        "3-平安企业团体综合意外险:18周岁-65周岁"
+      ],
+      "hit1": false,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 0.5,
+      "first_rank": 2,
+      "found_at": [
+        2
+      ]
+    },
+    {
+      "id": "P014",
+      "category": "paraphrase",
+      "question": "公司就两个人，能买团体意外险吗？",
+      "rewritten": "团体意外险投保人数要求",
+      "top_score": 0.9002,
+      "latency_ms": 3854.81,
+      "top3": [
+        "3-平安企业团体综合意外险#8",
+        "平安企业团体综合意外险(互联网版)适用条款#0",
+        "3-平安企业团体综合意外险#0"
+      ],
+      "expected": [
+        "3-平安企业团体综合意外险:3人及以上方可投保"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "P016",
+      "category": "paraphrase",
+      "question": "员工投保第10天就因病去世了，团意险赔吗？",
+      "rewritten": "团意险投保第10天身故是否赔付",
+      "top_score": 0.793,
+      "latency_ms": 4673.67,
+      "top3": [
+        "3-平安企业团体综合意外险#4",
+        "3-平安企业团体综合意外险#9",
+        "平安企业团体综合意外险(互联网版)适用条款#15"
+      ],
+      "expected": [
+        "3-平安企业团体综合意外险:30天等待期"
+      ],
+      "hit1": false,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 0.5,
+      "first_rank": 2,
+      "found_at": [
+        2
+      ]
+    },
+    {
+      "id": "P017",
+      "category": "paraphrase",
+      "question": "给同一个员工买两份团意险，能赔两份吗？",
+      "rewritten": "团意险同一员工投保多份是否适用损失补偿原则",
+      "top_score": 0.8717,
+      "latency_ms": 3864.32,
+      "top3": [
+        "3-平安企业团体综合意外险#7",
+        "平安企业团体综合意外险(互联网版)适用条款#6",
+        "平安企业团体综合意外险(互联网版)适用条款#7"
+      ],
+      "expected": [
+        "3-平安企业团体综合意外险:多投无效"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "P018",
+      "category": "paraphrase",
+      "question": "员工受伤后没打保险公司电话就自己去医院了，还能赔吗？",
+      "rewritten": "员工工伤未报案自行就医是否理赔",
+      "top_score": 0.9399,
+      "latency_ms": 3959.43,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#22",
+        "3-平安企业团体综合意外险#10",
+        "平安产险交通工具意外伤害保险（互联网版）条款#16"
+      ],
+      "expected": [
+        "3-平安企业团体综合意外险:将可能无法理赔"
+      ],
+      "hit1": false,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 0.5,
+      "first_rank": 2,
+      "found_at": [
+        2
+      ]
+    },
+    {
+      "id": "P019",
+      "category": "paraphrase",
+      "question": "员工喝了酒自己开车出事，意外险赔吗？",
+      "rewritten": "员工酒后驾车出险，意外险是否赔付",
+      "top_score": 0.9344,
+      "latency_ms": 4213.05,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#16",
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#8",
+        "平安企业团体综合意外险(互联网版)适用条款#34"
+      ],
+      "expected": [
+        "平安企业团体综合意外险(互联网版)适用条款:酒后驾车"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "P021",
+      "category": "paraphrase",
+      "question": "骨头摔裂了住院但没开刀，骨折保险金怎么算？",
+      "rewritten": "骨折保险金赔付标准：未手术骨裂",
+      "top_score": 0.9595,
+      "latency_ms": 3916.29,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#11",
+        "平安企业团体综合意外险(互联网版)适用条款#13",
+        "平安企业团体综合意外险(互联网版)适用条款#10"
+      ],
+      "expected": [
+        "平安企业团体综合意外险(互联网版)适用条款:25%的比例给付"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "P022",
+      "category": "paraphrase",
+      "question": "员工突然心脏病猝死，意外险赔吗？",
+      "rewritten": "员工猝死意外险是否赔付",
+      "top_score": 0.8541,
+      "latency_ms": 3910.69,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#15",
+        "3-平安企业团体综合意外险#4",
+        "3-平安企业团体综合意外险#2"
+      ],
+      "expected": [
+        "平安企业团体综合意外险(互联网版)适用条款:中暑、猝死"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "P023",
+      "category": "paraphrase",
+      "question": "坐出租车出了车祸算公共交通意外吗？",
+      "rewritten": "出租车车祸是否属于公共交通意外",
+      "top_score": 0.8439,
+      "latency_ms": 4146.26,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#30",
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#0",
+        "平安产险交通工具意外伤害保险（互联网版）条款#4"
+      ],
+      "expected": [
+        "平安企业团体综合意外险(互联网版)适用条款:出租汽车"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "P024",
+      "category": "paraphrase",
+      "question": "我自己开车出了车祸，交通工具意外险赔吗？",
+      "rewritten": "交通工具意外险是否赔偿被保险人驾驶私家车发生的交通事故",
+      "top_score": 0.8644,
+      "latency_ms": 4131.46,
+      "top3": [
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#0",
+        "平安产险交通工具意外伤害保险（互联网版）条款#8",
+        "平安产险交通工具意外伤害保险（互联网版）条款#4"
+      ],
+      "expected": [
+        "平安产险交通工具意外伤害保险（互联网版）条款:非以乘客的身份"
+      ],
+      "hit1": false,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 0.25,
+      "first_rank": 4,
+      "found_at": [
+        4
+      ]
+    },
+    {
+      "id": "P026",
+      "category": "paraphrase",
+      "question": "坐火车受伤看病花了1100块，交通工具意外险能赔多少？",
+      "rewritten": "交通工具意外险坐火车受伤住院费用1100元赔付金额",
+      "top_score": 0.9365,
+      "latency_ms": 4055.73,
+      "top3": [
+        "平安产险交通工具意外伤害保险（互联网版）条款#8",
+        "平安产险交通工具意外伤害保险（互联网版）条款#7",
+        "平安产险交通工具意外伤害保险（互联网版）条款#4"
+      ],
+      "expected": [
+        "平安产险交通工具意外伤害保险（互联网版）条款:80%的比例"
+      ],
+      "hit1": false,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 0.5,
+      "first_rank": 2,
+      "found_at": [
+        2
+      ]
+    },
+    {
+      "id": "P027",
+      "category": "paraphrase",
+      "question": "医保已经报销了一部分，剩下的意外险还能赔吗？",
+      "rewritten": "意外险报销是否受医保报销影响",
+      "top_score": 0.9298,
+      "latency_ms": 4325.65,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#7",
+        "平安产险交通工具意外伤害保险（互联网版）条款#19",
+        "平安产险交通工具意外伤害保险（互联网版）条款#7"
+      ],
+      "expected": [
+        "平安产险交通工具意外伤害保险（互联网版）条款:剩余部分"
+      ],
+      "hit1": false,
+      "recall5": false,
+      "recall_budget": false,
+      "mrr": 0.0,
+      "first_rank": null,
+      "found_at": [
+        null
+      ]
+    },
+    {
+      "id": "P028",
+      "category": "paraphrase",
+      "question": "出差途中行李丢了，救援服务能帮忙吗？",
+      "rewritten": "出差途中行李丢失，救援服务是否包含行李损失赔偿",
+      "top_score": 0.9887,
+      "latency_ms": 3777.21,
+      "top3": [
+        "平安境内紧急医疗救援服务条款#10",
+        "平安境内紧急医疗救援服务条款#11",
+        "平安境内紧急医疗救援服务条款#6"
+      ],
+      "expected": [
+        "平安境内紧急医疗救援服务条款:行李延误"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "P029",
+      "category": "paraphrase",
+      "question": "在外地出差住院超过一周，家里人过去看望的路费能报吗？",
+      "rewritten": "出差住院超一周，家属探望路费是否报销",
+      "top_score": 0.9186,
+      "latency_ms": 3859.85,
+      "top3": [
+        "平安境内紧急医疗救援服务条款#5",
+        "平安境内紧急医疗救援服务条款#11",
+        "平安企业团体综合意外险(互联网版)适用条款#30"
+      ],
+      "expected": [
+        "平安境内紧急医疗救援服务条款:亲属慰问探访"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "P031",
+      "category": "paraphrase",
+      "question": "在自己住的城市出了事，紧急救援服务能用吗？",
+      "rewritten": "紧急救援服务是否覆盖被保险人常住地",
+      "top_score": 0.8158,
+      "latency_ms": 4267.24,
+      "top3": [
+        "平安境内紧急医疗救援服务条款#1",
+        "平安境内紧急医疗救援服务条款#16",
+        "平安境内紧急医疗救援服务条款#8"
+      ],
+      "expected": [
+        "平安境内紧急医疗救援服务条款:非其境内常住地"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "P032",
+      "category": "paraphrase",
+      "question": "投保时没说自己的病史，之后会有什么后果？",
+      "rewritten": "投保时未如实告知病史的后果",
+      "top_score": 0.9552,
+      "latency_ms": 4027.17,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#20",
+        "平安产险交通工具意外伤害保险（互联网版）条款#15",
+        "平安境内紧急医疗救援服务条款#12"
+      ],
+      "expected": [
+        "平安企业团体综合意外险(互联网版)适用条款:如实告知"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "P033",
+      "category": "paraphrase",
+      "question": "意外险中途退保能退多少钱？",
+      "rewritten": "意外险中途退保能退多少钱",
+      "top_score": 0.8346,
+      "latency_ms": 3633.5,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#35",
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#9",
+        "平安企业团体综合意外险(互联网版)适用条款#28"
+      ],
+      "expected": [
+        "平安企业团体综合意外险(互联网版)适用条款:净保费×"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "P034",
+      "category": "paraphrase",
+      "question": "装修时把邻居家的墙砸坏了，装修保管吗？",
+      "rewritten": "装修期间砸坏邻居墙体，装修险是否赔偿第三方财产损失",
+      "top_score": 0.8828,
+      "latency_ms": 4291.9,
+      "top3": [
+        "7-平安装修保#0",
+        "5-施工保#0",
+        "5-施工保#1"
+      ],
+      "expected": [
+        "7-平安装修保:保第三者损失"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "P036",
+      "category": "paraphrase",
+      "question": "路人在我们工地旁边摔伤要我们赔，施工保管吗？",
+      "rewritten": "工地施工致路人摔伤，是否属于第三者责任险赔偿范围？",
+      "top_score": 0.8347,
+      "latency_ms": 4264.78,
+      "top3": [
+        "5-施工保#5",
+        "5-施工保#1",
+        "5-施工保#0"
+      ],
+      "expected": [
+        "5-施工保:4.2万元"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "P037",
+      "category": "paraphrase",
+      "question": "我们公司是四级施工资质，能买施工保吗？",
+      "rewritten": "四级施工资质企业能否投保建筑工程一切险",
+      "top_score": 0.9697,
+      "latency_ms": 3910.77,
+      "top3": [
+        "5-施工保#3",
+        "5-施工保#8",
+        "5-施工保#0"
+      ],
+      "expected": [
+        "5-施工保:三级及以上"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "P038",
+      "category": "paraphrase",
+      "question": "工程工期要一年半，能投施工保吗？",
+      "rewritten": "施工保是否承保工期一年半的工程",
+      "top_score": 0.9613,
+      "latency_ms": 4318.24,
+      "top3": [
+        "5-施工保#3",
+        "5-施工保#6",
+        "5-施工保#0"
+      ],
+      "expected": [
+        "5-施工保:不超过1年"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "P039",
+      "category": "paraphrase",
+      "question": "仓库被暴雨淹了，财产一切险赔吗？",
+      "rewritten": "财产一切险是否赔偿仓库因暴雨导致的财产损失",
+      "top_score": 0.9297,
+      "latency_ms": 4138.04,
+      "top3": [
+        "6-财产一切险#0",
+        "6-财产一切险#1",
+        "6-财产一切险#3"
+      ],
+      "expected": [
+        "6-财产一切险:暴雨造成积水"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "C001",
+      "category": "compare",
+      "question": "已经有工伤保险了，为什么还要买雇主责任险？",
+      "rewritten": "工伤保险与雇主责任险的区别",
+      "top_score": 0.9695,
+      "latency_ms": 4242.59,
+      "top3": [
+        "2-雇主责任险#4",
+        "2-雇主责任险#1",
+        "4-雇主安心保#0"
+      ],
+      "expected": [
+        "2-雇主责任险:与工伤保险的区别"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "C002",
+      "category": "compare",
+      "question": "雇主责任险和团体意外险有什么区别？",
+      "rewritten": "雇主责任险与团体意外险的区别",
+      "top_score": 0.9925,
+      "latency_ms": 3609.25,
+      "top3": [
+        "2-雇主责任险#3",
+        "2-雇主责任险#1",
+        "2-雇主责任险#4"
+      ],
+      "expected": [
+        "2-雇主责任险:与团体意外伤害保险的区别"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "C003",
+      "category": "compare",
+      "question": "财产基本险、综合险、一切险有什么区别？",
+      "rewritten": "财产基本险、综合险、一切险保障范围区别",
+      "top_score": 1.0,
+      "latency_ms": 3732.67,
+      "top3": [
+        "6-财产一切险#1",
+        "6-财产一切险#0",
+        "6-财产一切险#2"
+      ],
+      "expected": [
+        "6-财产一切险:综合险"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "C004",
+      "category": "compare",
+      "question": "雇主责任险A款、B款、94款有什么区别？",
+      "rewritten": "雇主责任险A款、B款、94款条款差异对比",
+      "top_score": 0.9999,
+      "latency_ms": 4167.31,
+      "top3": [
+        "2-雇主责任险#2",
+        "2-雇主责任险#1",
+        "2-雇主责任险#3"
+      ],
+      "expected": [
+        "2-雇主责任险:94款"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "C006",
+      "category": "compare",
+      "question": "交通工具意外险和交通出行意外险有什么区别？",
+      "rewritten": "交通工具意外险与交通出行意外险条款区别",
+      "top_score": 0.7914,
+      "latency_ms": 4136.42,
+      "top3": [
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#0",
+        "平安产险交通工具意外伤害保险（互联网版）条款#5",
+        "平安产险交通工具意外伤害保险（互联网版）条款#7"
+      ],
+      "expected": [
+        "平安产险交通工具意外伤害保险（互联网版）条款:非以乘客的身份",
+        "平安产险交通出行意外伤害保险（互联网版）产品说明:驾驶意外"
+      ],
+      "hit1": true,
+      "recall5": false,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        8,
+        1
+      ]
+    },
+    {
+      "id": "C007",
+      "category": "compare",
+      "question": "交通工具意外险和团体意外险的意外医疗赔付比例有什么不同？",
+      "rewritten": "交通工具意外险与团体意外险意外医疗赔付比例对比",
+      "top_score": 0.8932,
+      "latency_ms": 3606.64,
+      "top3": [
+        "平安产险交通工具意外伤害保险（互联网版）条款#7",
+        "3-平安企业团体综合意外险#3",
+        "3-平安企业团体综合意外险#9"
+      ],
+      "expected": [
+        "平安产险交通工具意外伤害保险（互联网版）条款:80%的比例",
+        "3-平安企业团体综合意外险:100%的比例"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "C008",
+      "category": "compare",
+      "question": "开放性骨折和闭合性骨折在骨折保险金上有什么区别？",
+      "rewritten": "开放性骨折与闭合性骨折在骨折保险金赔付标准上的区别",
+      "top_score": 0.9823,
+      "latency_ms": 4010.43,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#11",
+        "平安企业团体综合意外险(互联网版)适用条款#10",
+        "平安企业团体综合意外险(互联网版)适用条款#31"
+      ],
+      "expected": [
+        "平安企业团体综合意外险(互联网版)适用条款:开放性骨折"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "C009",
+      "category": "compare",
+      "question": "施工保和装修保的保障有什么异同？",
+      "rewritten": "施工保与装修保保障范围异同",
+      "top_score": 0.9081,
+      "latency_ms": 4256.92,
+      "top3": [
+        "5-施工保#1",
+        "5-施工保#4",
+        "5-施工保#7"
+      ],
+      "expected": [
+        "5-施工保:工程自身",
+        "7-平安装修保:保施工人员意外"
+      ],
+      "hit1": true,
+      "recall5": false,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1,
+        6
+      ]
+    },
+    {
+      "id": "C011",
+      "category": "compare",
+      "question": "团体意外险和附加疾病身故条款的等待期一样吗？",
+      "rewritten": "团体意外险附加疾病身故条款等待期",
+      "top_score": 0.8669,
+      "latency_ms": 3852.13,
+      "top3": [
+        "3-平安企业团体综合意外险#9",
+        "平安附加疾病身故保险条款#3",
+        "3-平安企业团体综合意外险#4"
+      ],
+      "expected": [
+        "3-平安企业团体综合意外险:30天等待期",
+        "平安附加疾病身故保险条款:三十天以后"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "C012",
+      "category": "compare",
+      "question": "团意险产品说写18-65岁，条款写75周岁，到底以哪个为准？",
+      "rewritten": "团意险投保年龄限制是18-65岁还是75周岁",
+      "top_score": 0.8683,
+      "latency_ms": 4173.04,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#0",
+        "3-平安企业团体综合意外险#8",
+        "3-平安企业团体综合意外险#0"
+      ],
+      "expected": [
+        "3-平安企业团体综合意外险:18周岁-65周岁",
+        "平安企业团体综合意外险(互联网版)适用条款:七十五周岁"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        2,
+        1
+      ]
+    },
+    {
+      "id": "C013",
+      "category": "compare",
+      "question": "意外伤害住院津贴和住院护理津贴有什么区别？",
+      "rewritten": "意外伤害住院津贴与住院护理津贴的区别",
+      "top_score": 0.9635,
+      "latency_ms": 4347.6,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#8",
+        "平安企业团体综合意外险(互联网版)适用条款#9",
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#5"
+      ],
+      "expected": [
+        "平安企业团体综合意外险(互联网版)适用条款:特级或一级护理"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "C014",
+      "category": "compare",
+      "question": "交通出行险和团意险条款对境外出险的规定有什么不同？",
+      "rewritten": "交通出行险与团体意外险条款境外出险责任差异",
+      "top_score": 0.844,
+      "latency_ms": 4060.6,
+      "top3": [
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#8",
+        "平安企业团体综合意外险(互联网版)适用条款#23",
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#7"
+      ],
+      "expected": [
+        "平安产险交通出行意外伤害保险（互联网版）产品说明:境外（含港澳台地区）期间",
+        "平安企业团体综合意外险(互联网版)适用条款:使领馆"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "C016",
+      "category": "compare",
+      "question": "雇主责任险的线上和线下理赔流程有什么区别？",
+      "rewritten": "雇主责任险线上与线下理赔流程区别",
+      "top_score": 1.0,
+      "latency_ms": 3827.12,
+      "top3": [
+        "2-雇主责任险#9",
+        "6-财产一切险#3",
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#10"
+      ],
+      "expected": [
+        "2-雇主责任险:线下流程"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "C017",
+      "category": "compare",
+      "question": "财产一切险和施工保在财产保障上有什么区别？",
+      "rewritten": "财产一切险与建筑工程一切险在保险标的及保障范围上的区别",
+      "top_score": 0.8328,
+      "latency_ms": 4498.86,
+      "top3": [
+        "5-施工保#1",
+        "6-财产一切险#0",
+        "6-财产一切险#1"
+      ],
+      "expected": [
+        "6-财产一切险:保障范围",
+        "5-施工保:工程自身"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        2,
+        1
+      ]
+    },
+    {
+      "id": "C018",
+      "category": "compare",
+      "question": "雇主责任险和施工保对员工的保障有什么区别？",
+      "rewritten": "雇主责任险与建筑工程一切险（或施工安全责任险）对员工保障范围差异",
+      "top_score": 0.8723,
+      "latency_ms": 4222.78,
+      "top3": [
+        "2-雇主责任险#3",
+        "5-施工保#1",
+        "5-施工保#4"
+      ],
+      "expected": [
+        "2-雇主责任险:死亡赔偿金",
+        "5-施工保:保员工"
+      ],
+      "hit1": false,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 0.3333333333333333,
+      "first_rank": 3,
+      "found_at": [
+        4,
+        3
+      ]
+    },
+    {
+      "id": "C019",
+      "category": "compare",
+      "question": "附加疾病身故保险和意外险的关系是什么？",
+      "rewritten": "附加疾病身故保险与意外险的赔付关系",
+      "top_score": 0.9412,
+      "latency_ms": 3771.85,
+      "top3": [
+        "平安附加疾病身故保险条款#0",
+        "平安附加疾病身故保险条款#4",
+        "平安附加疾病身故保险条款#3"
+      ],
+      "expected": [
+        "平安附加疾病身故保险条款:须附加于各种意外伤害保险合同",
+        "平安企业团体综合意外险(互联网版)适用条款:中暑、猝死"
+      ],
+      "hit1": true,
+      "recall5": false,
+      "recall_budget": false,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1,
+        null
+      ]
+    },
+    {
+      "id": "C021",
+      "category": "compare",
+      "question": "亚马逊责任险有免赔和无免赔方案的理赔有什么不同？",
+      "rewritten": "亚马逊责任险免赔额与无免赔额方案理赔差异",
+      "top_score": 0.9212,
+      "latency_ms": 4224.91,
+      "top3": [
+        "1-平安商业综合责任保险（亚马逊）#4",
+        "1-平安商业综合责任保险（亚马逊）#3",
+        "平安产险交通工具意外伤害保险（互联网版）条款#11"
+      ],
+      "expected": [
+        "1-平安商业综合责任保险（亚马逊）:直赔三者"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "C022",
+      "category": "compare",
+      "question": "意外身故保险金和伤残保险金之间是什么关系？",
+      "rewritten": "意外身故保险金与伤残保险金的关系",
+      "top_score": 0.9755,
+      "latency_ms": 5284.73,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#4",
+        "平安企业团体综合意外险(互联网版)适用条款#5",
+        "平安产险交通工具意外伤害保险（互联网版）条款#5"
+      ],
+      "expected": [
+        "平安企业团体综合意外险(互联网版)适用条款:身故保险金应扣除"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "C023",
+      "category": "compare",
+      "question": "交通工具险和团意险条款的责任免除有什么不同？",
+      "rewritten": "交通工具险与团体意外险条款责任免除对比",
+      "top_score": 0.9176,
+      "latency_ms": 4045.33,
+      "top3": [
+        "平安产险交通工具意外伤害保险（互联网版）条款#9",
+        "平安产险交通工具意外伤害保险（互联网版）条款#10",
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#8"
+      ],
+      "expected": [
+        "平安产险交通工具意外伤害保险（互联网版）条款:安全乘坐的规定",
+        "平安企业团体综合意外险(互联网版)适用条款:病理性骨折"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1,
+        5
+      ]
+    },
+    {
+      "id": "C024",
+      "category": "compare",
+      "question": "施工保员工意外和团意险的意外身故保额范围有什么区别？",
+      "rewritten": "施工保员工意外险与团体意外伤害险意外身故保额范围区别",
+      "top_score": 0.8575,
+      "latency_ms": 4406.78,
+      "top3": [
+        "5-施工保#4",
+        "3-平安企业团体综合意外险#2",
+        "2-雇主责任险#3"
+      ],
+      "expected": [
+        "5-施工保:保额可选10万",
+        "3-平安企业团体综合意外险:5-60万元"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "C026",
+      "category": "compare",
+      "question": "雇主责任险、雇主安心保、团体意外险哪个能赔误工费？",
+      "rewritten": "雇主责任险、雇主安心保、团体意外险是否赔偿误工费",
+      "top_score": 0.9528,
+      "latency_ms": 3793.13,
+      "top3": [
+        "4-雇主安心保#1",
+        "2-雇主责任险#3",
+        "2-雇主责任险#8"
+      ],
+      "expected": [
+        "2-雇主责任险:误工费用",
+        "4-雇主安心保:误工费用"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        2,
+        1
+      ]
+    },
+    {
+      "id": "C027",
+      "category": "compare",
+      "question": "闭合性骨折做手术和不做手术的赔付差多少？",
+      "rewritten": "闭合性骨折手术与非手术的赔付金额差异",
+      "top_score": 0.9632,
+      "latency_ms": 3611.2,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#11",
+        "平安企业团体综合意外险(互联网版)适用条款#10",
+        "平安企业团体综合意外险(互联网版)适用条款#12"
+      ],
+      "expected": [
+        "平安企业团体综合意外险(互联网版)适用条款:切开复位手术"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "C028",
+      "category": "compare",
+      "question": "意外险条款中的住院和一次住院怎么区分？",
+      "rewritten": "意外险条款中“住院”与“一次住院”的定义及区分标准",
+      "top_score": 1.0,
+      "latency_ms": 3585.27,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#30",
+        "平安企业团体综合意外险(互联网版)适用条款#9",
+        "平安企业团体综合意外险(互联网版)适用条款#8"
+      ],
+      "expected": [
+        "平安企业团体综合意外险(互联网版)适用条款:【住院】"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "C029",
+      "category": "compare",
+      "question": "换工作后职业风险变高和变低，保险上分别怎么处理？",
+      "rewritten": "换工作后职业类别变更，保险如何处理",
+      "top_score": 0.9618,
+      "latency_ms": 4062.96,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#21",
+        "3-平安企业团体综合意外险#8",
+        "平安产险交通工具意外伤害保险（互联网版）条款#21"
+      ],
+      "expected": [
+        "平安企业团体综合意外险(互联网版)适用条款:危险程度降低"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "R001",
+      "category": "procedure",
+      "question": "雇主责任险怎么在线上理赔？",
+      "rewritten": "雇主责任险线上理赔流程",
+      "top_score": 0.9989,
+      "latency_ms": 3876.88,
+      "top3": [
+        "2-雇主责任险#9",
+        "6-财产一切险#3",
+        "5-施工保#5"
+      ],
+      "expected": [
+        "2-雇主责任险:线上流程"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "R002",
+      "category": "procedure",
+      "question": "亚马逊卖家被海外买家索赔，理赔怎么走？",
+      "rewritten": "亚马逊卖家被海外买家索赔，理赔流程",
+      "top_score": 0.992,
+      "latency_ms": 3759.51,
+      "top3": [
+        "1-平安商业综合责任保险（亚马逊）#4",
+        "6-财产一切险#3",
+        "1-平安商业综合责任保险（亚马逊）#3"
+      ],
+      "expected": [
+        "1-平安商业综合责任保险（亚马逊）:理赔流程"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "R003",
+      "category": "procedure",
+      "question": "员工意外住院但一时付不出押金，团意险能帮忙吗？",
+      "rewritten": "团意险是否包含住院费用垫付责任",
+      "top_score": 0.9411,
+      "latency_ms": 3833.72,
+      "top3": [
+        "3-平安企业团体综合意外险#6",
+        "3-平安企业团体综合意外险#2",
+        "3-平安企业团体综合意外险#1"
+      ],
+      "expected": [
+        "3-平安企业团体综合意外险:住院医疗费用担保/垫付"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "R004",
+      "category": "procedure",
+      "question": "财产一切险线下理赔怎么走？",
+      "rewritten": "财产一切险线下理赔流程",
+      "top_score": 0.9993,
+      "latency_ms": 3840.17,
+      "top3": [
+        "6-财产一切险#3",
+        "2-雇主责任险#9",
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#10"
+      ],
+      "expected": [
+        "6-财产一切险:拨打热线95511"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "R006",
+      "category": "procedure",
+      "question": "交通工具意外险申请身故保险金需要哪些材料？",
+      "rewritten": "交通工具意外险身故保险金理赔申请材料",
+      "top_score": 1.0,
+      "latency_ms": 4143.73,
+      "top3": [
+        "平安产险交通工具意外伤害保险（互联网版）条款#17",
+        "平安企业团体综合意外险(互联网版)适用条款#23",
+        "平安产险交通工具意外伤害保险（互联网版）条款#19"
+      ],
+      "expected": [
+        "平安产险交通工具意外伤害保险（互联网版）条款:（一）身故保险金申请"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "R007",
+      "category": "procedure",
+      "question": "申请意外伤残保险金需要什么鉴定材料？",
+      "rewritten": "申请意外伤残保险金所需的鉴定材料",
+      "top_score": 0.9916,
+      "latency_ms": 4064.1,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#24",
+        "平安产险交通工具意外伤害保险（互联网版）条款#18",
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#3"
+      ],
+      "expected": [
+        "平安产险交通工具意外伤害保险（互联网版）条款:伤残鉴定报告"
+      ],
+      "hit1": false,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 0.5,
+      "first_rank": 2,
+      "found_at": [
+        2
+      ]
+    },
+    {
+      "id": "R008",
+      "category": "procedure",
+      "question": "申请意外住院津贴需要提交哪些材料？",
+      "rewritten": "申请意外住院津贴理赔需提交哪些材料",
+      "top_score": 0.9893,
+      "latency_ms": 3997.33,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#25",
+        "平安产险交通工具意外伤害保险（互联网版）条款#19",
+        "平安企业团体综合意外险(互联网版)适用条款#24"
+      ],
+      "expected": [
+        "平安企业团体综合意外险(互联网版)适用条款:病历和住院证明"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "R009",
+      "category": "procedure",
+      "question": "出险后急诊去了非约定医院怎么办？",
+      "rewritten": "出险后在非约定医院急诊就医，理赔如何处理？",
+      "top_score": 0.9752,
+      "latency_ms": 3818.62,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#22",
+        "平安产险交通工具意外伤害保险（互联网版）条款#16",
+        "平安境内紧急医疗救援服务条款#2"
+      ],
+      "expected": [
+        "平安企业团体综合意外险(互联网版)适用条款:因急诊未在释义医院"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "R011",
+      "category": "procedure",
+      "question": "交通出行意外险怎么办理退保？",
+      "rewritten": "交通出行意外险退保流程",
+      "top_score": 0.9971,
+      "latency_ms": 4592.5,
+      "top3": [
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#9",
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#2",
+        "平安产险交通工具意外伤害保险（互联网版）条款#5"
+      ],
+      "expected": [
+        "平安产险交通出行意外伤害保险（互联网版）产品说明:退保流程"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "R012",
+      "category": "procedure",
+      "question": "申请紧急救援服务费用需要哪些材料？",
+      "rewritten": "申请紧急救援服务理赔所需材料",
+      "top_score": 0.9831,
+      "latency_ms": 3802.23,
+      "top3": [
+        "平安境内紧急医疗救援服务条款#15",
+        "平安境内紧急医疗救援服务条款#0",
+        "3-平安企业团体综合意外险#11"
+      ],
+      "expected": [
+        "平安境内紧急医疗救援服务条款:救援服务申请书"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "R013",
+      "category": "procedure",
+      "question": "如果没经过救援机构安排自己转院，运送费用能报吗？",
+      "rewritten": "非救援机构安排自行转院的救护车费用是否报销",
+      "top_score": 0.972,
+      "latency_ms": 3816.71,
+      "top3": [
+        "平安境内紧急医疗救援服务条款#3",
+        "平安境内紧急医疗救援服务条款#14",
+        "平安境内紧急医疗救援服务条款#2"
+      ],
+      "expected": [
+        "平安境内紧急医疗救援服务条款:未经救援服务机构"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "R014",
+      "category": "procedure",
+      "question": "申请附加疾病身故保险金需要哪些材料？",
+      "rewritten": "申请附加疾病身故保险金所需材料",
+      "top_score": 0.9997,
+      "latency_ms": 3731.07,
+      "top3": [
+        "平安附加疾病身故保险条款#5",
+        "平安产险交通工具意外伤害保险（互联网版）条款#17",
+        "平安企业团体综合意外险(互联网版)适用条款#24"
+      ],
+      "expected": [
+        "平安附加疾病身故保险条款:户籍注销证明"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "R016",
+      "category": "procedure",
+      "question": "亚马逊卖家收到公估公司的邮件后应该怎么做？",
+      "rewritten": "亚马逊卖家收到公估公司邮件后如何处理",
+      "top_score": 0.9809,
+      "latency_ms": 3867.1,
+      "top3": [
+        "1-平安商业综合责任保险（亚马逊）#4",
+        "1-平安商业综合责任保险（亚马逊）#0",
+        "1-平安商业综合责任保险（亚马逊）#1"
+      ],
+      "expected": [
+        "1-平安商业综合责任保险（亚马逊）:被保险人处理"
+      ],
+      "hit1": true,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 1.0,
+      "first_rank": 1,
+      "found_at": [
+        1
+      ]
+    },
+    {
+      "id": "R017",
+      "category": "procedure",
+      "question": "怎么变更意外险的身故受益人？",
+      "rewritten": "意外险身故受益人变更流程",
+      "top_score": 0.9444,
+      "latency_ms": 3658.87,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#2",
+        "平安产险交通工具意外伤害保险（互联网版）条款#2",
+        "平安企业团体综合意外险(互联网版)适用条款#1"
+      ],
+      "expected": [
+        "平安产险交通工具意外伤害保险（互联网版）条款:变更身故保险金受益人"
+      ],
+      "hit1": false,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 0.5,
+      "first_rank": 2,
+      "found_at": [
+        2
+      ]
+    },
+    {
+      "id": "R018",
+      "category": "procedure",
+      "question": "委托别人代为申请保险金要准备什么？",
+      "rewritten": "委托他人申请保险金所需材料",
+      "top_score": 0.9833,
+      "latency_ms": 3616.2,
+      "top3": [
+        "平安产险交通工具意外伤害保险（互联网版）条款#18",
+        "平安企业团体综合意外险(互联网版)适用条款#24",
+        "平安企业团体综合意外险(互联网版)适用条款#25"
+      ],
+      "expected": [
+        "平安企业团体综合意外险(互联网版)适用条款:授权委托书原件"
+      ],
+      "hit1": false,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 0.5,
+      "first_rank": 2,
+      "found_at": [
+        2
+      ]
+    },
+    {
+      "id": "R019",
+      "category": "procedure",
+      "question": "医疗费原始凭证已经交给别的机构报销了，还能申请意外医疗吗？",
+      "rewritten": "意外医疗是否支持原始凭证已报销的理赔",
+      "top_score": 0.8682,
+      "latency_ms": 4153.15,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#7",
+        "平安产险交通工具意外伤害保险（互联网版）条款#19",
+        "平安产险交通工具意外伤害保险（互联网版）条款#8"
+      ],
+      "expected": [
+        "平安产险交通工具意外伤害保险（互联网版）条款:复印件"
+      ],
+      "hit1": false,
+      "recall5": true,
+      "recall_budget": true,
+      "mrr": 0.5,
+      "first_rank": 2,
+      "found_at": [
+        2
+      ]
+    },
+    {
+      "id": "O001",
+      "category": "out_of_scope",
+      "question": "交强险的保费是怎么计算的？",
+      "rewritten": "交强险保费计算公式",
+      "top_score": 0.2521,
+      "latency_ms": 3570.8,
+      "top3": [
+        "平安附加疾病身故保险条款#8",
+        "平安产险交通工具意外伤害保险（互联网版）条款#25",
+        "平安企业团体综合意外险(互联网版)适用条款#35"
+      ],
+      "expected": []
+    },
+    {
+      "id": "O002",
+      "category": "out_of_scope",
+      "question": "重疾险的等待期一般多长？",
+      "rewritten": "重疾险等待期时长",
+      "top_score": 0.5986,
+      "latency_ms": 3709.86,
+      "top3": [
+        "3-平安企业团体综合意外险#9",
+        "平安附加疾病身故保险条款#3",
+        "3-平安企业团体综合意外险#4"
+      ],
+      "expected": []
+    },
+    {
+      "id": "O003",
+      "category": "out_of_scope",
+      "question": "平安装修保一年保费多少钱？",
+      "rewritten": "平安装修保一年保费",
+      "top_score": 0.5085,
+      "latency_ms": 3830.97,
+      "top3": [
+        "1-平安商业综合责任保险（亚马逊）#3",
+        "5-施工保#4",
+        "5-施工保#2"
+      ],
+      "expected": [
+        "7-平安装修保:以当地保单为准"
+      ]
+    },
+    {
+      "id": "O004",
+      "category": "out_of_scope",
+      "question": "施工保的第三者责任保额是多少？",
+      "rewritten": "施工保第三者责任险保额",
+      "top_score": 0.9834,
+      "latency_ms": 4041.81,
+      "top3": [
+        "5-施工保#4",
+        "5-施工保#1",
+        "5-施工保#5"
+      ],
+      "expected": [
+        "5-施工保:以各机构保单为准"
+      ]
+    },
+    {
+      "id": "O006",
+      "category": "out_of_scope",
+      "question": "百万医疗险的报销比例是多少？",
+      "rewritten": "百万医疗险报销比例",
+      "top_score": 0.4747,
+      "latency_ms": 4093.93,
+      "top3": [
+        "平安产险交通工具意外伤害保险（互联网版）条款#7",
+        "3-平安企业团体综合意外险#9",
+        "3-平安企业团体综合意外险#3"
+      ],
+      "expected": []
+    },
+    {
+      "id": "O007",
+      "category": "out_of_scope",
+      "question": "亚马逊责任险赔不赔产品召回费用？",
+      "rewritten": "亚马逊产品责任险是否赔偿产品召回费用",
+      "top_score": 0.7104,
+      "latency_ms": 3903.76,
+      "top3": [
+        "1-平安商业综合责任保险（亚马逊）#3",
+        "1-平安商业综合责任保险（亚马逊）#2",
+        "1-平安商业综合责任保险（亚马逊）#4"
+      ],
+      "expected": []
+    },
+    {
+      "id": "O008",
+      "category": "out_of_scope",
+      "question": "雇主责任险每人赔偿限额最高能买到多少？",
+      "rewritten": "雇主责任险每人赔偿限额最高是多少",
+      "top_score": 0.9514,
+      "latency_ms": 4773.39,
+      "top3": [
+        "4-雇主安心保#3",
+        "2-雇主责任险#8",
+        "2-雇主责任险#1"
+      ],
+      "expected": []
+    },
+    {
+      "id": "O009",
+      "category": "out_of_scope",
+      "question": "施工保的费率是多少？",
+      "rewritten": "施工保费率",
+      "top_score": 0.72,
+      "latency_ms": 4048.52,
+      "top3": [
+        "5-施工保#2",
+        "5-施工保#4",
+        "5-施工保#3"
+      ],
+      "expected": [
+        "5-施工保:按工程造价收费"
+      ]
+    },
+    {
+      "id": "O011",
+      "category": "out_of_scope",
+      "question": "企业团体综合意外险一年的保费是多少？",
+      "rewritten": "企业团体综合意外险一年期保费",
+      "top_score": 0.5454,
+      "latency_ms": 4267.3,
+      "top3": [
+        "3-平安企业团体综合意外险#2",
+        "3-平安企业团体综合意外险#0",
+        "平安企业团体综合意外险(互联网版)适用条款#35"
+      ],
+      "expected": []
+    },
+    {
+      "id": "O012",
+      "category": "out_of_scope",
+      "question": "养老保险每个月要交多少钱？",
+      "rewritten": "养老保险每月缴费金额",
+      "top_score": 0.0253,
+      "latency_ms": 4079.52,
+      "top3": [
+        "3-平安企业团体综合意外险#7",
+        "3-平安企业团体综合意外险#4",
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#6"
+      ],
+      "expected": []
+    },
+    {
+      "id": "O013",
+      "category": "out_of_scope",
+      "question": "重疾险和百万医疗险应该怎么搭配？",
+      "rewritten": "重疾险与百万医疗险搭配方案",
+      "top_score": 0.2599,
+      "latency_ms": 3574.6,
+      "top3": [
+        "平安境内紧急医疗救援服务条款#8",
+        "平安境内紧急医疗救援服务条款#10",
+        "平安附加疾病身故保险条款#7"
+      ],
+      "expected": []
+    },
+    {
+      "id": "O014",
+      "category": "out_of_scope",
+      "question": "中国平安的股票现在值得买吗？",
+      "rewritten": "中国平安股票投资价值分析",
+      "top_score": 0.1409,
+      "latency_ms": 3974.95,
+      "top3": [
+        "3-平安企业团体综合意外险#12",
+        "3-平安企业团体综合意外险#4",
+        "平安境内紧急医疗救援服务条款#0"
+      ],
+      "expected": []
+    },
+    {
+      "id": "O016",
+      "category": "out_of_scope",
+      "question": "今天北京天气怎么样？",
+      "rewritten": "北京今日天气",
+      "top_score": 0.0024,
+      "latency_ms": 3871.72,
+      "top3": [
+        "平安境内紧急医疗救援服务条款#10",
+        "3-平安企业团体综合意外险#7",
+        "3-平安企业团体综合意外险#10"
+      ],
+      "expected": []
+    },
+    {
+      "id": "O017",
+      "category": "out_of_scope",
+      "question": "增额终身寿险的收益率有多少？",
+      "rewritten": "增额终身寿险收益率",
+      "top_score": 0.1125,
+      "latency_ms": 3712.4,
+      "top3": [
+        "平安附加疾病身故保险条款#6",
+        "3-平安企业团体综合意外险#4",
+        "平安产险交通工具意外伤害保险（互联网版）条款#25"
+      ],
+      "expected": []
+    },
+    {
+      "id": "O018",
+      "category": "out_of_scope",
+      "question": "家庭财产险保哪些东西？",
+      "rewritten": "家庭财产险保险责任 保障范围",
+      "top_score": 0.6608,
+      "latency_ms": 3958.94,
+      "top3": [
+        "6-财产一切险#0",
+        "6-财产一切险#1",
+        "6-财产一切险#2"
+      ],
+      "expected": []
+    },
+    {
+      "id": "O019",
+      "category": "out_of_scope",
+      "question": "宠物险怎么买？",
+      "rewritten": "宠物险购买流程及投保条件",
+      "top_score": 0.3543,
+      "latency_ms": 4443.79,
+      "top3": [
+        "平安产险交通工具意外伤害保险（互联网版）条款#3",
+        "平安产险交通工具意外伤害保险（互联网版）条款#12",
+        "平安企业团体综合意外险(互联网版)适用条款#3"
+      ],
+      "expected": []
+    },
+    {
+      "id": "O021",
+      "category": "out_of_scope",
+      "question": "车损险里玻璃单独破碎赔不赔？",
+      "rewritten": "车损险是否赔偿玻璃单独破碎",
+      "top_score": 0.2721,
+      "latency_ms": 5239.93,
+      "top3": [
+        "平安产险交通工具意外伤害保险（互联网版）条款#13",
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#10",
+        "平安产险交通工具意外伤害保险（互联网版）条款#15"
+      ],
+      "expected": []
+    },
+    {
+      "id": "O022",
+      "category": "out_of_scope",
+      "question": "社保断缴三个月会有什么影响？",
+      "rewritten": "社保断缴三个月对医疗保险报销及连续缴费年限的影响",
+      "top_score": 0.1048,
+      "latency_ms": 4284.74,
+      "top3": [
+        "平安企业团体综合意外险(互联网版)适用条款#7",
+        "3-平安企业团体综合意外险#9",
+        "平安企业团体综合意外险(互联网版)适用条款#16"
+      ],
+      "expected": []
+    },
+    {
+      "id": "O023",
+      "category": "out_of_scope",
+      "question": "公司员工的个人所得税怎么计算？",
+      "rewritten": "公司员工个人所得税计算",
+      "top_score": 0.3343,
+      "latency_ms": 3891.08,
+      "top3": [
+        "2-雇主责任险#1",
+        "4-雇主安心保#2",
+        "平安企业团体综合意外险(互联网版)适用条款#35"
+      ],
+      "expected": []
+    },
+    {
+      "id": "O024",
+      "category": "out_of_scope",
+      "question": "网购退货运费险怎么理赔？",
+      "rewritten": "网购退货运费险理赔流程",
+      "top_score": 0.5629,
+      "latency_ms": 4095.86,
+      "top3": [
+        "6-财产一切险#3",
+        "1-平安商业综合责任保险（亚马逊）#4",
+        "平安产险交通工具意外伤害保险（互联网版）条款#13"
+      ],
+      "expected": []
+    },
+    {
+      "id": "O026",
+      "category": "out_of_scope",
+      "question": "雇主安心保在上海买多少钱？",
+      "rewritten": "雇主安心保上海地区保费价格",
+      "top_score": 0.6265,
+      "latency_ms": 5111.77,
+      "top3": [
+        "4-雇主安心保#1",
+        "3-平安企业团体综合意外险#2",
+        "4-雇主安心保#3"
+      ],
+      "expected": [
+        "4-雇主安心保:不同地区会有承保方案和价格差异"
+      ]
+    },
+    {
+      "id": "O027",
+      "category": "out_of_scope",
+      "question": "平安装修保的投保条件是什么？",
+      "rewritten": "平安装修保投保条件",
+      "top_score": 0.8817,
+      "latency_ms": 4701.9,
+      "top3": [
+        "5-施工保#3",
+        "平安企业团体综合意外险(互联网版)适用条款#0",
+        "3-平安企业团体综合意外险#8"
+      ],
+      "expected": [
+        "7-平安装修保:以当地保单为准"
+      ]
+    },
+    {
+      "id": "O028",
+      "category": "out_of_scope",
+      "question": "紧急救援服务的服务限额是多少？",
+      "rewritten": "紧急救援服务的服务限额",
+      "top_score": 0.836,
+      "latency_ms": 4024.31,
+      "top3": [
+        "平安境内紧急医疗救援服务条款#5",
+        "平安境内紧急医疗救援服务条款#4",
+        "平安境内紧急医疗救援服务条款#1"
+      ],
+      "expected": [
+        "平安境内紧急医疗救援服务条款:服务限额"
+      ]
+    },
+    {
+      "id": "O029",
+      "category": "out_of_scope",
+      "question": "交通出行意外险的保险期间是多长？",
+      "rewritten": "交通出行意外险的保险期间",
+      "top_score": 0.9208,
+      "latency_ms": 4836.68,
+      "top3": [
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#6",
+        "平安产险交通工具意外伤害保险（互联网版）条款#4",
+        "平安产险交通出行意外伤害保险（互联网版）产品说明#5"
+      ],
+      "expected": [
+        "平安产险交通出行意外伤害保险（互联网版）产品说明:保险期间由保险人和投保人协商确定"
+      ]
+    }
+  ]
+}

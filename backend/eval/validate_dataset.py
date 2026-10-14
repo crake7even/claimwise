@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
 from collections import Counter
@@ -28,8 +29,9 @@ def normalize(text: str) -> str:
 def validate(path: Path) -> list[str]:
     chunks = load_chunks(
         DOCS_DIR,
-        chunk_size=env_int("RAG_CHUNK_SIZE", 1200),
-        overlap=env_int("RAG_CHUNK_OVERLAP", 180),
+        chunk_size=env_int("RAG_CHUNK_SIZE", 400),
+        overlap=env_int("RAG_CHUNK_OVERLAP", 60),
+        strategy=os.getenv("RAG_CHUNK_STRATEGY", "structured"),
     )
     chunks_by_stem: dict[str, list[str]] = {}
     for chunk in chunks:
