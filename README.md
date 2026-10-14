@@ -146,7 +146,10 @@ cd backend
 .venv/bin/python eval/run_eval.py                         # 检索评测（离线，BM25）
 .venv/bin/python eval/run_eval.py --online --mode full    # 检索评测（改写 + Embedding + Rerank）
 .venv/bin/python eval/run_judge.py --mode semantic        # 生成质量（LLM-judge）
+.venv/bin/python eval/smoke.py                            # 冒烟场景（引用、拒答、多轮、联网采用）
 ```
+
+每次修改后按改动类型执行的分级测试见 [`docs/product/testing.md`](docs/product/testing.md)。
 
 ### 结果
 
