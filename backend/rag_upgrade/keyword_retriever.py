@@ -3,12 +3,13 @@ from __future__ import annotations
 from collections import Counter
 from dataclasses import dataclass
 from math import log
+import os
 import re
 
 from .document_loader import DocChunk
 
 
-TOKEN_RE = re.compile(r"[a-zA-Z0-9]+|[\u4e00-\u9fff]{1,4}")
+TOKEN_RE = re.compile(r"[a-zA-Z0-9]+|[\u4e00-\u9fff]+")
 
 
 @dataclass
@@ -19,6 +20,7 @@ class RetrievalHit:
     content: str
     score: float
     retriever: str
+    section: str = ""
 
     def to_dict(self) -> dict:
         return {
@@ -28,6 +30,7 @@ class RetrievalHit:
             "content": self.content,
             "score": round(float(self.score), 4),
             "retriever": self.retriever,
+            "section": self.section,
         }
 
 
@@ -36,15 +39,22 @@ def tokenize(text: str) -> list[str]:
     raw_tokens = TOKEN_RE.findall(lowered)
     tokens: list[str] = []
     for token in raw_tokens:
-        tokens.append(token)
-        if any("\u4e00" <= char <= "\u9fff" for char in token) and len(token) > 1:
-            tokens.extend(token[i:i + 2] for i in range(len(token) - 1))
+        if "\u4e00" <= token[0] <= "\u9fff":
+            # 中文连续串整体生成 bigram，避免按固定长度截断后丢失跨段 bigram
+            if len(token) == 1:
+                tokens.append(token)
+            else:
+                tokens.extend(token[i:i + 2] for i in range(len(token) - 1))
+        else:
+            tokens.append(token)
     return tokens
 
 
 class BM25Retriever:
-    def __init__(self, chunks: list[DocChunk]):
+    def __init__(self, chunks: list[DocChunk], b: float | None = None):
         self.chunks = chunks
+        # 长度归一化强度；结构化切分后 chunk 长短差异大，过强会偏向只含少量关键词的短 chunk
+        self.b = b if b is not None else float(os.getenv("RAG_BM25_B", "0.5"))
         self.tokenized_docs = [tokenize(chunk.content) for chunk in chunks]
         self.doc_freq = Counter()
         for tokens in self.tokenized_docs:
@@ -59,7 +69,7 @@ class BM25Retriever:
         counts = Counter(doc_tokens)
         total_docs = len(self.tokenized_docs)
         k1 = 1.5
-        b = 0.75
+        b = self.b
         score = 0.0
         for token in query_tokens:
             df = self.doc_freq.get(token, 0)
@@ -85,6 +95,7 @@ class BM25Retriever:
                 content=chunk.content,
                 score=score,
                 retriever="local_bm25",
+                section=chunk.section,
             ))
         hits.sort(key=lambda item: item.score, reverse=True)
         return hits[:top_k]

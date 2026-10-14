@@ -17,8 +17,9 @@ def main() -> int:
     load_dotenv()
     chunks = load_chunks(
         DOCS_DIR,
-        chunk_size=env_int("RAG_CHUNK_SIZE", 1200),
-        overlap=env_int("RAG_CHUNK_OVERLAP", 180),
+        chunk_size=env_int("RAG_CHUNK_SIZE", 400),
+        overlap=env_int("RAG_CHUNK_OVERLAP", 60),
+        strategy=os.getenv("RAG_CHUNK_STRATEGY", "structured"),
     )
     if not chunks:
         print(f"No chunks loaded from {DOCS_DIR}")
