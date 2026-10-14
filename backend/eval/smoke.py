@@ -68,10 +68,11 @@ def not_contains(*words: str) -> Check:
 
 
 def conclusion_not(*words: str) -> Check:
-    """首句（结论）不能是这些说法，如"资料中未提及"；正文中的补充说明不受限制。"""
+    """回答不能以这些说法开头（如"资料中未提及"）；首句中的限定说明（如"未提及2025年的案例"）不受限制。"""
     def check(r: Reply) -> Optional[str]:
-        head = re.split(r"[。\n]", r.text.strip(), maxsplit=1)[0]
-        return None if not any(w in head for w in words) else f"结论是：{head[:60]}"
+        head = re.split(r"[。\n]", r.text.strip(), maxsplit=1)[0].lstrip("*#>：: ")
+        head = re.sub(r"^(结论|回答)[:：]", "", head).lstrip("*#>：: ")
+        return None if not head.startswith(words) else f"结论是：{head[:60]}"
     return check
 
 
