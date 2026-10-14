@@ -1,4 +1,4 @@
-import type { ChatSession, Message, SearchMode } from "./types";
+import type { ChatSession, Message, SearchMode, Source } from "./types";
 
 const STORAGE_KEY = "insurance-rag-chat-history-v1";
 const TITLE_MAX_LENGTH = 28;
@@ -55,7 +55,24 @@ function normalizeMessage(value: unknown): Message | null {
     mode: isSearchMode(item.mode) ? item.mode : undefined,
     isStreaming: false,
     isLoading: false,
-    sources: Array.isArray(item.sources) ? item.sources.filter((source): source is string => typeof source === "string") : undefined,
+    sources: Array.isArray(item.sources) ? item.sources.map(normalizeSource).filter((source): source is Source => Boolean(source)) : undefined,
+    error: typeof item.error === "string" ? item.error : undefined,
+  };
+}
+
+// 旧版本历史中的 sources 是字符串标签（如"本地资料库"），没有引用价值，导入时丢弃
+function normalizeSource(value: unknown): Source | null {
+  if (!value || typeof value !== "object") return null;
+  const item = value as Partial<Source>;
+  if (typeof item.id !== "number" || typeof item.title !== "string" || typeof item.snippet !== "string") return null;
+  return {
+    id: item.id,
+    kind: item.kind === "web" ? "web" : "local",
+    title: item.title,
+    section: typeof item.section === "string" ? item.section : undefined,
+    snippet: item.snippet,
+    url: typeof item.url === "string" && /^https?:\/\//.test(item.url) ? item.url : undefined,
+    score: typeof item.score === "number" ? item.score : undefined,
   };
 }
 
