@@ -1,5 +1,15 @@
 export type SearchMode = "quick" | "semantic" | "web";
 
+export interface Source {
+  id: number;
+  kind: "local" | "web";
+  title: string;
+  section?: string;
+  snippet: string;
+  url?: string;
+  score?: number | null;
+}
+
 export interface Message {
   id: string;
   role: "user" | "ai";
@@ -7,7 +17,8 @@ export interface Message {
   mode?: SearchMode;
   isStreaming?: boolean;
   isLoading?: boolean;
-  sources?: string[];
+  sources?: Source[];
+  error?: string;
 }
 
 export interface ChatSession {
@@ -16,4 +27,10 @@ export interface ChatSession {
   messages: Message[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface HealthStatus {
+  quick: boolean;
+  semantic: boolean;
+  web: boolean;
 }

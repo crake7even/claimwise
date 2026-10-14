@@ -14,6 +14,8 @@ import type { ChatSession } from "../types";
 
 interface SidebarProps {
   collapsed: boolean;
+  mobileOpen: boolean;
+  onCloseMobile: () => void;
   onToggle: () => void;
   onNewChat: () => void;
   sessions: ChatSession[];
@@ -25,7 +27,9 @@ interface SidebarProps {
 }
 
 export function Sidebar({
-  collapsed,
+  collapsed: desktopCollapsed,
+  mobileOpen,
+  onCloseMobile,
   onToggle,
   onNewChat,
   sessions,
@@ -36,16 +40,20 @@ export function Sidebar({
   onImport,
 }: SidebarProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  // 移动端以抽屉形式完整展开，桌面端才使用折叠态
+  const collapsed = desktopCollapsed && !mobileOpen;
   const primaryButtonClass =
     "flex h-11 items-center gap-3 rounded-lg bg-blue-600 px-3 text-sm font-semibold text-white shadow-sm shadow-blue-100 transition-colors hover:bg-blue-700";
   const utilityButtonClass =
     "flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-950";
 
   return (
+    <>
+    {mobileOpen && <div className="fixed inset-0 z-30 bg-slate-900/30 md:hidden" onClick={onCloseMobile} />}
     <aside
-      className={`flex h-full shrink-0 flex-col border-r border-slate-200 bg-white transition-[width] duration-300 ${
-        collapsed ? "w-[76px]" : "w-[260px]"
-      }`}
+      className={`fixed inset-y-0 left-0 z-40 flex h-full shrink-0 flex-col border-r border-slate-200 bg-white transition-[width,transform] duration-300 md:static md:z-auto md:translate-x-0 ${
+        mobileOpen ? "translate-x-0" : "-translate-x-full"
+      } ${collapsed ? "w-[76px]" : "w-[260px]"}`}
     >
       <div className={`flex h-[74px] shrink-0 items-center border-b border-slate-100 px-4 ${collapsed ? "justify-center" : "gap-3"}`}>
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
@@ -172,7 +180,7 @@ export function Sidebar({
         )}
       </div>
 
-      <div className="shrink-0 border-t border-slate-100 p-3">
+      <div className="hidden shrink-0 border-t border-slate-100 p-3 md:block">
         <button
           type="button"
           onClick={onToggle}
@@ -186,5 +194,6 @@ export function Sidebar({
         </button>
       </div>
     </aside>
+    </>
   );
 }

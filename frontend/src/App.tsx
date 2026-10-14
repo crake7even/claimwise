@@ -2,7 +2,8 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Sidebar } from "./components/Sidebar";
 import { ChatMessage } from "./components/ChatMessage";
 import { ChatInput } from "./components/ChatInput";
-import type { ChatSession, Message, SearchMode } from "./types";
+import type { ChatSession, HealthStatus, Message, SearchMode } from "./types";
+import { describeError, fetchHealth, streamChat, type HistoryTurn } from "./api";
 import {
   createEmptySession,
   createId,
@@ -14,34 +15,48 @@ import {
   sessionHasUserMessage,
   visibleSessions,
 } from "./sessionHistory";
-import { MessageSquarePlus } from "lucide-react";
-
-const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "");
+import { Menu } from "lucide-react";
 
 const welcomeMessage: Message = {
   id: "welcome",
   role: "ai",
   content:
-    "您好！我是您的保险资料智能问答助手。您可以直接向我提问关于保险产品、保障范围、理赔流程等方面的问题。默认会优先从本地资料库中为您检索准确的信息。\n\n请问今天有什么我可以帮您的？",
+    "您好！我是您的保险资料智能问答助手。您可以直接向我提问关于保险产品、保障范围、理赔流程等方面的问题。回答会标注引用编号，点击即可查看原文依据。\n\n请问今天有什么我可以帮您的？",
 };
 
 const suggestions: Array<{ text: string; mode: SearchMode }> = [
   { text: "介绍下雇主责任险", mode: "quick" },
-  { text: "雇主责任险和工伤保险的区别？", mode: "semantic" },
+  { text: "员工喝酒开车出事，意外险赔吗？", mode: "semantic" },
   { text: "搜索保险行业 AI 最新新闻", mode: "web" },
 ];
+
+// 多轮对话最多携带的历史消息条数（用户与助手各算一条）
+const HISTORY_MESSAGES = 6;
+// 流式输出时合并渲染的间隔，避免每个分片都触发一次整页重渲染
+const STREAM_FLUSH_MS = 60;
 
 interface SessionState {
   sessions: ChatSession[];
   currentSessionId: string;
 }
 
+function buildHistory(messages: Message[]): HistoryTurn[] {
+  return messages
+    .filter((message) => !message.isLoading && !message.isStreaming && message.content.trim())
+    .slice(-HISTORY_MESSAGES)
+    .map((message) => ({ role: message.role === "user" ? "user" : "assistant", content: message.content }));
+}
+
 export default function App() {
   const [sessionState, setSessionState] = useState<SessionState>(() => loadSessionState());
   const [isProcessing, setIsProcessing] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [health, setHealth] = useState<HealthStatus | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const stickToBottomRef = useRef(true);
+  const abortRef = useRef<AbortController | null>(null);
 
   const { sessions, currentSessionId } = sessionState;
   const currentSession = sessions.find((session) => session.id === currentSessionId) ?? sessions[0];
@@ -49,17 +64,32 @@ export default function App() {
   const sidebarSessions = useMemo(() => visibleSessions(sessions), [sessions]);
   const displayedMessages = useMemo(() => [welcomeMessage, ...currentMessages], [currentMessages]);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
   useEffect(() => {
-    saveSessionState(sessions, currentSessionId);
-  }, [sessions, currentSessionId]);
+    fetchHealth().then(setHealth);
+  }, []);
 
+  // 流式输出期间不写 localStorage，结束后统一保存一次
   useEffect(() => {
-    scrollToBottom();
+    if (!isProcessing) saveSessionState(sessions, currentSessionId);
+  }, [sessions, currentSessionId, isProcessing]);
+
+  // 仅当用户停留在底部附近时自动跟随滚动，向上翻阅历史时不打断
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (container && stickToBottomRef.current) {
+      container.scrollTop = container.scrollHeight;
+    }
   }, [displayedMessages]);
+
+  useEffect(() => {
+    stickToBottomRef.current = true;
+  }, [currentSessionId]);
+
+  const handleScroll = () => {
+    const container = scrollRef.current;
+    if (!container) return;
+    stickToBottomRef.current = container.scrollHeight - container.scrollTop - container.clientHeight < 80;
+  };
 
   const updateSessionMessages = (sessionId: string, updater: (messages: Message[]) => Message[]) => {
     setSessionState((prev) => ({
@@ -72,6 +102,7 @@ export default function App() {
 
   const handleNewChat = () => {
     setNotice(null);
+    setMobileSidebarOpen(false);
     setSessionState((prev) => {
       const existingEmptySession = prev.sessions.find((session) => !sessionHasUserMessage(session) && session.messages.length === 0);
       if (existingEmptySession) {
@@ -88,10 +119,13 @@ export default function App() {
 
   const handleSelectSession = (sessionId: string) => {
     setNotice(null);
+    setMobileSidebarOpen(false);
     setSessionState((prev) => ({ ...prev, currentSessionId: sessionId }));
   };
 
   const handleDeleteSession = (sessionId: string) => {
+    const target = sessions.find((session) => session.id === sessionId);
+    if (!window.confirm(`确定删除会话“${target?.title ?? ""}”吗？删除后无法恢复。`)) return;
     setNotice(null);
     setSessionState((prev) => {
       let remainingSessions = prev.sessions.filter((session) => session.id !== sessionId);
@@ -130,7 +164,8 @@ export default function App() {
     link.href = url;
     link.download = `insurance-chat-history-${new Date().toISOString().slice(0, 10)}.json`;
     link.click();
-    URL.revokeObjectURL(url);
+    // 部分浏览器在 click 后异步开始下载，立即释放会导致下载失败
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
   const handleImport = async (file: File) => {
@@ -154,90 +189,71 @@ export default function App() {
     }
   };
 
+  const handleStop = () => {
+    abortRef.current?.abort();
+  };
+
   const handleSend = async (text: string, mode: SearchMode) => {
     if (!text.trim() || isProcessing || !currentSession) return;
 
     const sessionId = currentSession.id;
-    const userMessage: Message = {
-      id: createId(),
-      role: "user",
-      content: text,
-    };
+    const history = buildHistory(currentSession.messages);
+    const userMessage: Message = { id: createId(), role: "user", content: text };
     const aiMessageId = createId();
-    const aiMessage: Message = {
-      id: aiMessageId,
-      role: "ai",
-      content: "",
-      isLoading: true,
-      mode,
-    };
+    const aiMessage: Message = { id: aiMessageId, role: "ai", content: "", isLoading: true, mode };
+    const patchAiMessage = (patch: Partial<Message>) =>
+      updateSessionMessages(sessionId, (messages) =>
+        messages.map((message) => (message.id === aiMessageId ? { ...message, ...patch } : message)),
+      );
 
     setNotice(null);
+    stickToBottomRef.current = true;
     updateSessionMessages(sessionId, (messages) => [...messages, userMessage, aiMessage]);
     setIsProcessing(true);
 
+    const controller = new AbortController();
+    abortRef.current = controller;
+    let content = "";
+    let flushTimer: number | undefined;
+    const flush = () => {
+      flushTimer = undefined;
+      patchAiMessage({ content, isLoading: false, isStreaming: true });
+    };
+
     try {
-      const response = await fetch(`${apiBaseUrl}/api/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text, mode }),
-      });
-
-      if (!response.ok || !response.body) {
-        throw new Error(`请求失败：${response.status}`);
-      }
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder("utf-8");
-      let content = "";
-      updateSessionMessages(sessionId, (messages) =>
-        messages.map((message) => (message.id === aiMessageId ? { ...message, isLoading: false, isStreaming: true } : message)),
+      await streamChat(
+        { message: text, mode, history },
+        {
+          onSources: (sources) => patchAiMessage({ sources }),
+          onDelta: (delta) => {
+            content += delta;
+            if (flushTimer === undefined) flushTimer = window.setTimeout(flush, STREAM_FLUSH_MS);
+          },
+          onError: (message) => patchAiMessage({ error: message }),
+        },
+        controller.signal,
       );
-
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        content += decoder.decode(value, { stream: true });
-        updateSessionMessages(sessionId, (messages) =>
-          messages.map((message) => (message.id === aiMessageId ? { ...message, content } : message)),
-        );
-      }
-
-      content += decoder.decode();
-      updateSessionMessages(sessionId, (messages) =>
-        messages.map((message) =>
-          message.id === aiMessageId
-            ? {
-                ...message,
-                content: content || "没有获取到回答，请稍后重试。",
-                isStreaming: false,
-                sources: mode === "web" ? ["联网搜索", "本地资料库"] : ["本地资料库"],
-              }
-            : message,
-        ),
-      );
+      window.clearTimeout(flushTimer);
+      patchAiMessage({ content: content || "没有获取到回答，请稍后重试。", isLoading: false, isStreaming: false });
     } catch (error) {
-      updateSessionMessages(sessionId, (messages) =>
-        messages.map((message) =>
-          message.id === aiMessageId
-            ? {
-                ...message,
-                isLoading: false,
-                isStreaming: false,
-                content: error instanceof Error ? error.message : "请求失败，请检查后端服务是否已启动。",
-              }
-            : message,
-        ),
-      );
+      window.clearTimeout(flushTimer);
+      if (controller.signal.aborted) {
+        patchAiMessage({ content: content || "已停止生成。", isLoading: false, isStreaming: false, error: content ? "已手动停止生成，回答可能不完整。" : undefined });
+      } else {
+        patchAiMessage({ content, isLoading: false, isStreaming: false, error: describeError(error) });
+      }
     } finally {
+      abortRef.current = null;
       setIsProcessing(false);
     }
   };
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-[#f8f9fb] font-sans text-slate-900">
+    <div className="flex h-dvh w-full overflow-hidden bg-[#f8f9fb] font-sans text-slate-900">
       <Sidebar
         collapsed={sidebarCollapsed}
+        mobileOpen={mobileSidebarOpen}
+        onCloseMobile={() => setMobileSidebarOpen(false)}
         onToggle={() => setSidebarCollapsed((value) => !value)}
         onNewChat={handleNewChat}
         sessions={sidebarSessions}
@@ -249,25 +265,26 @@ export default function App() {
       />
 
       <main className="flex min-w-0 flex-1 flex-col transition-all duration-300">
-        <header className="flex h-[74px] shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6">
-          <div>
-            <h1 className="text-xl font-bold leading-6 text-slate-950">保险资料智能问答系统</h1>
-            <p className="mt-1 text-sm text-slate-500">面向业务人员的专业保险知识库助手</p>
-          </div>
+        <header className="flex h-[64px] shrink-0 items-center gap-3 border-b border-slate-200 bg-white px-4 sm:h-[74px] sm:px-6">
           <button
-            onClick={handleNewChat}
-            className="flex items-center rounded-lg px-3 py-2 text-sm font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+            type="button"
+            onClick={() => setMobileSidebarOpen(true)}
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 md:hidden"
+            title="打开会话列表"
           >
-            <MessageSquarePlus className="mr-2 h-4 w-4" />
-            开启新对话
+            <Menu className="h-5 w-5" />
           </button>
+          <div className="min-w-0">
+            <h1 className="truncate text-lg font-bold leading-6 text-slate-950 sm:text-xl">保险资料智能问答系统</h1>
+            <p className="mt-0.5 hidden text-sm text-slate-500 sm:block">面向业务人员的专业保险知识库助手</p>
+          </div>
         </header>
 
         <section className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-[#f6f7f9]">
-          <div className="min-h-0 flex-1 overflow-y-auto px-8 py-8">
+          <div ref={scrollRef} onScroll={handleScroll} className="min-h-0 flex-1 overflow-y-auto px-4 py-6 sm:px-8 sm:py-8">
             <div className="mx-auto flex w-full max-w-[980px] flex-col gap-5">
               {notice && (
-                <div className="ml-14 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-medium text-blue-700">
+                <div className="rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-medium text-blue-700 sm:ml-14">
                   {notice}
                 </div>
               )}
@@ -277,34 +294,25 @@ export default function App() {
               ))}
 
               {currentMessages.length === 0 && (
-                <div className="ml-14 grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 gap-3 sm:ml-14 sm:grid-cols-3 sm:gap-4">
                   {suggestions.map((item) => (
                     <button
                       key={item.text}
                       onClick={() => handleSend(item.text, item.mode)}
-                      className="h-16 rounded-xl border border-slate-200 bg-white px-4 text-left text-sm font-medium leading-5 text-slate-800 transition-colors hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
+                      className="min-h-14 rounded-xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-medium leading-5 text-slate-800 transition-colors hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
                     >
                       {item.text}
                     </button>
                   ))}
                 </div>
               )}
-
-              <div ref={messagesEndRef} />
             </div>
           </div>
 
-          {isProcessing && (
-            <div className="pointer-events-none absolute bottom-[100px] left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-medium text-blue-600 shadow-sm">
-              <span className="h-3 w-3 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
-              正在检索资料，请稍候...
-            </div>
-          )}
-
-          <div className="shrink-0 border-t border-slate-200 bg-white/72 px-8 py-4 backdrop-blur">
+          <div className="shrink-0 border-t border-slate-200 bg-white/72 px-3 py-3 backdrop-blur sm:px-8 sm:py-4">
             <div className="mx-auto w-full max-w-[980px]">
-              <ChatInput onSend={handleSend} isProcessing={isProcessing} />
-              <p className="mt-3 text-center text-xs text-slate-500">
+              <ChatInput onSend={handleSend} onStop={handleStop} isProcessing={isProcessing} health={health} />
+              <p className="mt-2 text-center text-xs text-slate-500 sm:mt-3">
                 AI 生成的内容仅供参考，不作为最终承保或理赔结论。
               </p>
             </div>
