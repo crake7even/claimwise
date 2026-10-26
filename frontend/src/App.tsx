@@ -26,6 +26,7 @@ const suggestions: Array<{ text: string; mode: SearchMode; tag: string; icon: ty
 
 // 多轮对话最多携带的历史消息条数（用户与助手各算一条）
 const HISTORY_MESSAGES = 6;
+const HISTORY_CONTENT_MAX_LENGTH = 4000;
 // 流式输出时合并渲染的间隔，避免每个分片都触发一次整页重渲染
 const STREAM_FLUSH_MS = 60;
 const HEALTH_RETRY_MS = 10000;
@@ -39,7 +40,10 @@ function buildHistory(messages: Message[]): HistoryTurn[] {
   return messages
     .filter((message) => !message.isLoading && !message.isStreaming && message.content.trim())
     .slice(-HISTORY_MESSAGES)
-    .map((message) => ({ role: message.role === "user" ? "user" : "assistant", content: message.content }));
+    .map((message) => ({
+      role: message.role === "user" ? "user" : "assistant",
+      content: Array.from(message.content).slice(0, HISTORY_CONTENT_MAX_LENGTH).join(""),
+    }));
 }
 
 export default function App() {

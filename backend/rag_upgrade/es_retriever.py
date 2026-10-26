@@ -5,6 +5,7 @@ import json
 import ssl
 import urllib.error
 import urllib.request
+from uuid import uuid4
 
 from .config import env_bool, es_base_url
 from .document_loader import DocChunk
@@ -22,6 +23,7 @@ class ElasticsearchHTTPRetriever:
     ):
         self.base_url = es_base_url()
         self.index_name = index_name
+        self.read_alias = f"{index_name}-read"
         self.username = username
         self.password = password
         self.verify_certs = verify_certs
@@ -74,7 +76,7 @@ class ElasticsearchHTTPRetriever:
             self.status = f"{type(exc).__name__}: {exc}"
         return self.available
 
-    def ensure_index(self) -> bool:
+    def _create_index(self, index_name: str) -> bool:
         if not self.ping():
             return False
         mapping = {
@@ -89,29 +91,28 @@ class ElasticsearchHTTPRetriever:
             }
         }
         try:
-            self._request("HEAD", f"/{self.index_name}")
-            return True
-        except urllib.error.HTTPError as exc:
-            if exc.code != 404:
-                self.status = f"index check failed: HTTP {exc.code}"
+            _, text = self._request("PUT", f"/{index_name}", mapping)
+            if json.loads(text).get("acknowledged") is not True:
+                self.status = "index creation was not acknowledged"
                 return False
-        except Exception as exc:
-            self.status = f"index check failed: {type(exc).__name__}: {exc}"
-            return False
-
-        try:
-            self._request("PUT", f"/{self.index_name}", mapping)
             return True
         except Exception as exc:
             self.status = f"index create failed: {type(exc).__name__}: {exc}"
             return False
 
     def index_chunks(self, chunks: list[DocChunk]) -> bool:
-        if not chunks or not self.ensure_index():
+        if not chunks:
+            self.status = "index build refused: corpus is empty"
+            return False
+        if len({chunk.id for chunk in chunks}) != len(chunks):
+            self.status = "index build refused: duplicate chunk IDs"
+            return False
+        index_name = f"{self.index_name}-{uuid4().hex}"
+        if not self._create_index(index_name):
             return False
         lines: list[str] = []
         for chunk in chunks:
-            lines.append(json.dumps({"index": {"_index": self.index_name, "_id": chunk.id}}, ensure_ascii=False))
+            lines.append(json.dumps({"index": {"_index": index_name, "_id": chunk.id}}, ensure_ascii=False))
             lines.append(json.dumps({
                 "content": chunk.content,
                 "file_name": chunk.file_name,
@@ -120,12 +121,44 @@ class ElasticsearchHTTPRetriever:
                 "section": chunk.section,
             }, ensure_ascii=False))
         try:
-            self._request("POST", "/_bulk?refresh=true", "\n".join(lines) + "\n")
-            self.status = f"indexed {len(chunks)} chunks"
+            _, text = self._request("POST", "/_bulk?refresh=true", "\n".join(lines) + "\n")
+            result = json.loads(text)
+            items = result.get("items", [])
+            if result.get("errors") is not False or len(items) != len(chunks) or any(
+                item.get("index", {}).get("status") not in (200, 201) or "error" in item.get("index", {})
+                for item in items
+            ):
+                self.status = "bulk index failed: incomplete or rejected writes; read alias unchanged"
+                return False
+            _, text = self._request("GET", f"/{index_name}/_count")
+            result = json.loads(text)
+            if result.get("count") != len(chunks) or result.get("_shards", {}).get("failed", 0):
+                self.status = "index count verification failed; read alias unchanged"
+                return False
+            self._switch_alias(index_name)
+            self.status = f"indexed {len(chunks)} chunks into {index_name}; reading via {self.read_alias}"
             return True
         except Exception as exc:
             self.status = f"bulk index failed: {type(exc).__name__}: {exc}"
             return False
+
+    def _switch_alias(self, index_name: str) -> None:
+        try:
+            _, text = self._request("GET", f"/_alias/{self.read_alias}")
+            current = json.loads(text)
+        except urllib.error.HTTPError as exc:
+            if exc.code != 404:
+                raise
+            current = {}
+        actions = [
+            {"remove": {"index": name, "alias": self.read_alias, "must_exist": True}}
+            for name in current
+        ]
+        actions.append({"add": {"index": index_name, "alias": self.read_alias}})
+        _, text = self._request("POST", "/_aliases", {"actions": actions})
+        result = json.loads(text)
+        if result.get("acknowledged") is not True or result.get("errors", False):
+            raise RuntimeError("alias switch was not acknowledged or contained failed actions")
 
     def search(self, query: str, top_k: int = 5) -> list[RetrievalHit]:
         if not self.available and not self.ping():
@@ -142,7 +175,7 @@ class ElasticsearchHTTPRetriever:
             "size": top_k,
         }
         try:
-            _, text = self._request("POST", f"/{self.index_name}/_search", body)
+            _, text = self._request("POST", f"/{self.read_alias}/_search", body)
             response = json.loads(text)
         except Exception as exc:
             self.status = f"search failed: {type(exc).__name__}: {exc}"

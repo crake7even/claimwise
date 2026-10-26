@@ -172,6 +172,14 @@ class ApiContractTests(unittest.TestCase):
         with self.assertRaises(ValidationError):
             api_server.ChatRequest(message="x" * 4001)
 
+    def test_history_length_limit_counts_unicode_code_points(self) -> None:
+        for text in ("字", "😀"):
+            with self.subTest(text=text):
+                body = api_server.ChatRequest(message="继续", history=[{"role": "assistant", "content": text * 4000}])
+                self.assertEqual(body.history[0].content, text * 4000)
+                with self.assertRaises(ValidationError):
+                    api_server.ChatRequest(message="继续", history=[{"role": "assistant", "content": text * 4001}])
+
     def test_search_endpoint_returns_structured_sources(self) -> None:
         body = api_server.search(api_server.SearchRequest(query="施工保投保要求", mode="quick", top_k=3))
         self.assertEqual(len(body["results"]), 3)
