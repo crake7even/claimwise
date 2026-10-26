@@ -6,14 +6,16 @@ import logging
 import os
 import time
 from concurrent.futures import ThreadPoolExecutor
-from typing import Iterator, Literal
+from typing import Generator, Literal
 
+import anyio
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from openai import OpenAI
 from pydantic import BaseModel, Field
 
+from api_limits import ApiLimits, ApiLimitsMiddleware
 from rag_upgrade import HybridRagService
 from rag_upgrade.config import env_bool, env_int, load_dotenv
 from rag_upgrade.query_rewriter import QueryRewriter
@@ -77,6 +79,8 @@ app = FastAPI(
     version="2.0.0",
     description="Hybrid retrieval API for the ClaimWise insurance RAG assistant.",
 )
+api_limits = ApiLimits.from_env()
+app.add_middleware(ApiLimitsMiddleware, get_limits=lambda: api_limits)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins(),
@@ -95,6 +99,8 @@ def qwen_client() -> OpenAI | None:
     return OpenAI(
         api_key=api_key,
         base_url=os.getenv("DASHSCOPE_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1"),
+        timeout=30,
+        max_retries=0,
     )
 
 
@@ -188,7 +194,20 @@ def event(kind: str, **payload) -> str:
     return json.dumps({"type": kind, **payload}, ensure_ascii=False) + "\n"
 
 
-def stream_answer(message: str, mode: str, history: list[dict] | None = None) -> Iterator[str]:
+class ChatStreamingResponse(StreamingResponse):
+    def __init__(self, content: Generator[str, None, None]):
+        super().__init__(content, media_type="application/x-ndjson; charset=utf-8")
+        self._stream = content
+
+    async def __call__(self, scope, receive, send):
+        try:
+            await super().__call__(scope, receive, send)
+        finally:
+            with anyio.CancelScope(shield=True):
+                await anyio.to_thread.run_sync(self._stream.close)
+
+
+def stream_answer(message: str, mode: str, history: list[dict] | None = None) -> Generator[str, None, None]:
     """NDJSON 事件流：sources → delta* → done；出错时输出 error 事件并降级为检索摘要。"""
     history = history or []
     started = time.perf_counter()
@@ -208,6 +227,14 @@ def stream_answer(message: str, mode: str, history: list[dict] | None = None) ->
         yield event("done")
         return
 
+    if not result["reranked"] and any(source["kind"] == "local" for source in sources):
+        yield event("delta", text=fallback_answer(
+            sources,
+            "候选资料未完成相关性验证，暂不生成保险结论。以下摘录可能与问题无关，请核对原文。",
+        ))
+        yield event("done")
+        return
+
     client = qwen_client()
     if client is None:
         yield event("delta", text=fallback_answer(sources, "当前未配置 DASHSCOPE_API_KEY，暂不生成回答。"))
@@ -220,11 +247,13 @@ def stream_answer(message: str, mode: str, history: list[dict] | None = None) ->
     messages.append({"role": "user", "content": f"{build_context_block(sources)}\n\n问题：{message}"})
 
     emitted = False
+    response = None
     try:
         response = client.chat.completions.create(
             model=os.getenv("QWEN_CHAT_MODEL", os.getenv("QWEN_MODEL", "qwen3.6-flash")),
             messages=messages,
             temperature=0.2,
+            max_tokens=max(1, env_int("CHAT_MAX_TOKENS", 1024)),
             stream=True,
             extra_body={"enable_thinking": False},
         )
@@ -235,11 +264,19 @@ def stream_answer(message: str, mode: str, history: list[dict] | None = None) ->
             if delta:
                 emitted = True
                 yield event("delta", text=delta)
+            if getattr(chunk.choices[0], "finish_reason", None) == "length":
+                yield event("error", message="回答达到长度上限，内容可能不完整。")
     except Exception as exc:
         logger.warning("generation failed: %s: %s", type(exc).__name__, exc)
         yield event("error", message=f"回答生成中断（{type(exc).__name__}）")
         if not emitted:
             yield event("delta", text=fallback_answer(sources, "模型暂时不可用，已返回检索到的资料摘要。"))
+    finally:
+        try:
+            if response is not None:
+                response.close()
+        finally:
+            client.close()
     yield event("done")
 
 
@@ -288,4 +325,4 @@ def chat(request: ChatRequest) -> StreamingResponse:
         body = iter([event("delta", text="请输入问题。"), event("done")])
         return StreamingResponse(body, media_type="application/x-ndjson; charset=utf-8")
     history = [turn.model_dump() for turn in request.history]
-    return StreamingResponse(stream_answer(message, request.mode, history), media_type="application/x-ndjson; charset=utf-8")
+    return ChatStreamingResponse(stream_answer(message, request.mode, history))

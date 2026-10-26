@@ -185,12 +185,67 @@ def parse_events(stream) -> list[dict]:
     return [json.loads(line) for line in "".join(stream).splitlines() if line.strip()]
 
 
+def verified_retrieval() -> dict:
+    return {
+        "reranked": True, "rewritten": None,
+        "sources": [{"id": 1, "kind": "local", "title": "测试条款", "section": "", "snippet": "保险责任", "score": 0.9}],
+    }
+
+
 class StreamAnswerTests(unittest.TestCase):
+    def test_unverified_local_sources_never_reach_generation(self) -> None:
+        for mode in ("quick", "semantic", "web"):
+            for rerank_enabled in ("true", "false"):
+                with self.subTest(mode=mode, rerank_enabled=rerank_enabled), \
+                        patch.dict(os.environ, {"ENABLE_RERANK": rerank_enabled}), \
+                        patch.object(api_server.service, "_rerank", return_value=None), \
+                        patch.object(api_server, "qwen_client") as client:
+                    events = parse_events(api_server.stream_answer("雇主责任险是否赔偿火星移民费用", mode))
+                    client.assert_not_called()
+                    self.assertEqual([item["type"] for item in events], ["sources", "delta", "done"])
+                    self.assertTrue(events[0]["sources"])
+                    self.assertIn("未完成相关性验证", events[1]["text"])
+
+    def test_web_results_do_not_bypass_unverified_local_sources(self) -> None:
+        from rag_upgrade.external_search import ExternalHit
+
+        web_hit = ExternalHit("公开新闻", "https://example.com", "网络摘要", 1, "test")
+        with patch.object(api_server.service, "_rerank", return_value=None), \
+                patch.object(api_server.service.external, "search", return_value=[web_hit]), \
+                patch.object(api_server, "qwen_client") as client:
+            events = parse_events(api_server.stream_answer("雇主责任险最新动态", "web"))
+        client.assert_not_called()
+        self.assertTrue(any(source["kind"] == "web" for source in events[0]["sources"]))
+        self.assertIn("未完成相关性验证", events[1]["text"])
+
+    def test_verified_local_candidates_still_allow_generation(self) -> None:
+        client = MagicMock()
+        with patch.dict(os.environ, {"ENABLE_RERANK": "true"}), \
+                patch.object(api_server.service, "_rerank", side_effect=lambda query, candidates, top_k: [candidates[0] | {"rerank_score": 0.9}]), \
+                patch.object(api_server, "qwen_client", return_value=client):
+            events = parse_events(api_server.stream_answer("雇主责任险保障什么", "quick"))
+        client.chat.completions.create.assert_called_once()
+        self.assertEqual(len(events[0]["sources"]), 1)
+        self.assertEqual(events[0]["sources"][0]["score"], 0.9)
+
+    def test_web_only_sources_still_allow_generation_without_local_rerank(self) -> None:
+        result = {
+            "reranked": False, "rewritten": None,
+            "sources": [{"id": 1, "kind": "web", "title": "公开新闻", "url": "https://example.com", "snippet": "网络摘要", "score": 1}],
+        }
+        client = MagicMock()
+        with patch.object(api_server, "retrieve", return_value=result), \
+                patch.object(api_server, "qwen_client", return_value=client):
+            list(api_server.stream_answer("保险行业最新动态", "web"))
+        client.chat.completions.create.assert_called_once()
+        messages = client.chat.completions.create.call_args.kwargs["messages"]
+        self.assertIn("<联网资料>", messages[-1]["content"])
+
     def test_offline_stream_emits_sources_then_fallback(self) -> None:
         events = parse_events(api_server.stream_answer("雇主责任险保障什么", "quick"))
         self.assertEqual([e["type"] for e in events], ["sources", "delta", "done"])
         self.assertTrue(events[0]["sources"])
-        self.assertIn("DASHSCOPE_API_KEY", events[1]["text"])
+        self.assertIn("未完成相关性验证", events[1]["text"])
 
     def test_no_context_returns_fixed_answer_without_calling_model(self) -> None:
         empty = {"query": "q", "queries": ["q"], "status": {}, "reranked": True, "contexts": [], "external": []}
@@ -232,7 +287,8 @@ class StreamAnswerTests(unittest.TestCase):
     def test_generation_error_emits_error_and_fallback(self) -> None:
         client = MagicMock()
         client.chat.completions.create.side_effect = RuntimeError("boom")
-        with patch.object(api_server, "qwen_client", return_value=client):
+        with patch.object(api_server, "qwen_client", return_value=client), \
+                patch.object(api_server, "retrieve", return_value=verified_retrieval()):
             events = parse_events(api_server.stream_answer("雇主责任险保障什么", "quick"))
         types = [e["type"] for e in events]
         self.assertEqual(types, ["sources", "error", "delta", "done"])
@@ -240,9 +296,10 @@ class StreamAnswerTests(unittest.TestCase):
 
     def test_history_is_passed_to_model(self) -> None:
         client = MagicMock()
-        client.chat.completions.create.return_value = iter([])
+        client.chat.completions.create.return_value.__iter__.return_value = iter([])
         history = [{"role": "user", "content": "雇主责任险保障什么"}, {"role": "assistant", "content": "保障死亡伤残"}]
-        with patch.object(api_server, "qwen_client", return_value=client):
+        with patch.object(api_server, "qwen_client", return_value=client), \
+                patch.object(api_server, "retrieve", return_value=verified_retrieval()):
             list(api_server.stream_answer("它的保费怎么算", "quick", history))
         messages = client.chat.completions.create.call_args.kwargs["messages"]
         self.assertEqual([m["role"] for m in messages], ["system", "user", "assistant", "user"])

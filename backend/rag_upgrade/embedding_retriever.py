@@ -38,6 +38,8 @@ class EmbeddingRetriever:
         return OpenAI(
             api_key=os.getenv("DASHSCOPE_API_KEY"),
             base_url=os.getenv("DASHSCOPE_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1"),
+            timeout=20,
+            max_retries=0,
         )
 
     def _load_cache(self) -> None:
@@ -63,12 +65,13 @@ class EmbeddingRetriever:
         self.cache_path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
 
     def _embed(self, texts: list[str]) -> list[list[float]]:
-        response = self._client().embeddings.create(
-            model=self.model,
-            input=texts,
-            dimensions=self.dimensions,
-            encoding_format="float",
-        )
+        with self._client() as client:
+            response = client.embeddings.create(
+                model=self.model,
+                input=texts,
+                dimensions=self.dimensions,
+                encoding_format="float",
+            )
         return [item.embedding for item in response.data]
 
     def ensure_index(self, batch_size: int = 10) -> bool:

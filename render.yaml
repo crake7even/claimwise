@@ -20,6 +20,16 @@ services:
         value: "true"
       - key: QWEN_CHAT_MODEL
         value: qwen3.6-flash
+      - key: CHAT_MAX_TOKENS
+        value: "1024"
+      - key: API_REQUESTS_PER_IP_PER_MINUTE
+        value: "6"
+      - key: API_REQUESTS_PER_MINUTE
+        value: "30"
+      - key: API_REQUESTS_PER_DAY
+        value: "200"
+      - key: API_MAX_CONCURRENT
+        value: "4"
       - key: EMBEDDING_MODEL
         value: text-embedding-v4
       - key: EMBEDDING_DIMENSIONS
