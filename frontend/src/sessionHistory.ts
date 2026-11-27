@@ -55,6 +55,7 @@ function normalizeMessage(value: unknown): Message | null {
     mode: isSearchMode(item.mode) ? item.mode : undefined,
     isStreaming: false,
     isLoading: false,
+    rewritten: typeof item.rewritten === "string" && item.rewritten ? item.rewritten : undefined,
     sources: Array.isArray(item.sources) ? item.sources.map(normalizeSource).filter((source): source is Source => Boolean(source)) : undefined,
     error: typeof item.error === "string" ? item.error : undefined,
   };

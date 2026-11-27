@@ -4,10 +4,10 @@
 
 | 级别 | 触发条件 | 执行内容 | 通过标准 |
 |---|---|---|---|
-| L0 基础 | 每次改动 | `backend`: `python -m unittest discover -s tests`、`python eval/validate_dataset.py`；`frontend`: `npm run lint && npm run build` | 全部通过 |
+| L0 基础 | 每次改动 | `backend`: `python -m unittest discover -s tests`、`python eval/validate_dataset.py`；`frontend`: `npm run lint && npm test && npm run build` | 全部通过 |
 | L1 检索 | 切分、分词、融合、Rerank、查询改写 | L0 + `eval/run_eval.py`（离线 quick）+ `eval/run_eval.py --online --mode full`（dev） | Hit@1、Recall@3000字 较上一版下降不超过 0.02 |
 | L2 生成 | 提示词、生成模型、上下文拼接 | L0 + `eval/smoke.py` + `eval/run_judge.py --mode semantic`（dev） | 冒烟全部通过；忠实度不下降、误拒率不上升 |
-| L3 界面 | 前端改动 | L0 + 浏览器冒烟：桌面与 375px 宽度各一遍（提问、引用展开、多轮、停止生成、模式切换、侧边栏） | 清单逐项通过 |
+| L3 界面 | 前端改动 | L0 + 浏览器冒烟：桌面与 375px 宽度各一遍（提问、阶段提示、角标弹出卡片 / 底部抽屉、引用资料与其他检索结果分组展开、检索用语、多轮、停止生成、模式切换、导入旧会话、侧边栏） | 清单逐项通过 |
 | L4 发布 | 合并 / 部署前后 | 对应级别 + holdout 评测；部署后 `eval/smoke.py --base-url <线上 API>` 与 `/api/health` | 线上冒烟全部通过 |
 
 ## 回归规则
@@ -15,6 +15,19 @@
 每修复一个 bug，补充一个能复现它的单元测试或冒烟场景（`eval/smoke.py` 中的 `SCENARIOS`），先确认其在修复前失败、修复后通过。
 
 多轮历史长度回归：导入含超过 4,000 个 Unicode code points 的回答或用户消息的会话，再发送追问。确认请求中每条历史最多 4,000 个 code points、只包含最近 6 条已完成且非空的消息，并且不会因历史长度返回 `422`。覆盖中文与 emoji；会话中显示和导出的原文应保持完整。
+
+流式完成状态回归：模拟只收到 `delta` 后 EOF、读取抛错以及末尾 JSON 被截断，确认已收到的正文保留且显示回答可能不完整；收到 `done` 时正常结束（覆盖末行无换行及跨分片 Unicode）。收到 `error` 后的降级正文和 `done` 应继续处理；手动停止仍显示停止提示。
+
+引用链路回归：
+- 来源数据：`sources` 与 `/api/search` 中本地来源的 `title` 不含文件编号，`snippet` 不含“《文档名》条款名”前缀行，`section` 不是纯序号；送进模型的上下文与改动前逐字一致（`PublicSourceTests`）。
+- 多轮编号：历史回答中的 `[n]`、`[1、2]`、`【1】` 等标记不进入模型和改写器（单测），第二轮回答引用的编号都在本轮来源内（冒烟 `multi_turn_stale_citations`）。
+- 引用解析：`[1,2]`、`[1-3]`、`【1】` 渲染为多个角标，越界编号保持文本，Markdown 链接不受影响，流式中途的半截 `[1` 不闪烁（`frontend/src/citations.test.ts`）。
+- 旧会话：导入改动前导出的会话，来源显示与新回答一致（`frontend/src/sourcePresentation.test.ts` + 浏览器导入实测）。
+
+联网防护回归：
+- 无关问题（含“忽略之前的规则…”式提问）在联网模式下不调用博查，并说明未联网（单测 `test_off_topic_question_never_calls_web_search` + 冒烟 `web_off_topic_blocked`）；未命中词表但改写器判定相关的问题仍可联网。
+- 搜索词截断到 60 字符、网页摘要中的伪造分隔标签被去除、相同查询走缓存、每日额度用完后不再调用且 UTC 零点重置（`WebGuardTests`、`BochaExternalSearchTests`）。
+- 改写提示词有改动时，按 L1 跑 `run_eval.py --online --mode full` 对比。
 
 ## 说明
 

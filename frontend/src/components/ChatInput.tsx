@@ -3,6 +3,8 @@ import type { HealthStatus, SearchMode } from "../types";
 import { ArrowUp, Globe, Sparkles, Square, Zap } from "lucide-react";
 
 interface ChatInputProps {
+  mode: SearchMode;
+  onModeChange: (mode: SearchMode) => void;
   onSend: (text: string, mode: SearchMode) => void;
   onStop: () => void;
   isProcessing: boolean;
@@ -17,9 +19,8 @@ const modes: Array<{ label: string; short: string; value: SearchMode; hint: stri
 
 const MAX_TEXTAREA_HEIGHT = 168;
 
-export function ChatInput({ onSend, onStop, isProcessing, health }: ChatInputProps) {
+export function ChatInput({ mode, onModeChange: setMode, onSend, onStop, isProcessing, health }: ChatInputProps) {
   const [text, setText] = useState("");
-  const [mode, setMode] = useState<SearchMode>("quick");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const isAvailable = (value: SearchMode) => !health || health[value];

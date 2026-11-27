@@ -1,4 +1,4 @@
-import type { HealthStatus, SearchMode, Source } from "./types";
+import type { HealthStatus, RetrievalStage, SearchMode, Source } from "./types";
 
 const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "");
 
@@ -8,13 +8,15 @@ export interface HistoryTurn {
 }
 
 interface StreamHandlers {
-  onSources: (sources: Source[]) => void;
+  onSources: (sources: Source[], rewritten: string | null) => void;
+  onStage: (stage: RetrievalStage) => void;
   onDelta: (text: string) => void;
   onError: (message: string) => void;
 }
 
 type StreamEvent =
-  | { type: "sources"; sources: Source[] }
+  | { type: "stage"; stage: RetrievalStage }
+  | { type: "sources"; sources: Source[]; rewritten?: string | null }
   | { type: "delta"; text: string }
   | { type: "error"; message: string }
   | { type: "done" };
@@ -37,7 +39,7 @@ export function describeError(error: unknown): string {
   return error instanceof Error ? error.message : "请求失败，请稍后重试。";
 }
 
-/** 读取后端 NDJSON 事件流：sources → delta* → done，error 事件可能出现在任意位置。 */
+/** 读取后端 NDJSON 事件流：stage* → sources → stage → delta* → done，error 事件可能出现在任意位置；未知事件类型忽略。 */
 export async function streamChat(
   body: { message: string; mode: SearchMode; history: HistoryTurn[] },
   handlers: StreamHandlers,
@@ -56,24 +58,36 @@ export async function streamChat(
   const reader = response.body.getReader();
   const decoder = new TextDecoder("utf-8");
   let buffer = "";
+  let completed = false;
   const handleLine = (line: string) => {
-    if (!line.trim()) return;
+    if (completed || !line.trim()) return;
     const event = JSON.parse(line) as StreamEvent;
-    if (event.type === "sources") handlers.onSources(event.sources);
+    if (event.type === "stage") handlers.onStage(event.stage);
+    else if (event.type === "sources") handlers.onSources(event.sources, event.rewritten ?? null);
     else if (event.type === "delta") handlers.onDelta(event.text);
     else if (event.type === "error") handlers.onError(event.message);
+    else if (event.type === "done") completed = true;
   };
 
-  while (true) {
-    const { value, done } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split("\n");
-    buffer = lines.pop() ?? "";
-    lines.forEach(handleLine);
+  try {
+    while (!completed) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() ?? "";
+      lines.forEach(handleLine);
+    }
+    buffer += decoder.decode();
+    handleLine(buffer);
+    if (!completed) throw new ApiError("回答接收中断，内容可能不完整，请重试。");
+  } catch (error) {
+    if (signal.aborted || error instanceof ApiError) throw error;
+    throw new ApiError("回答接收中断，内容可能不完整，请重试。");
+  } finally {
+    await reader.cancel().catch(() => undefined);
+    reader.releaseLock();
   }
-  buffer += decoder.decode();
-  handleLine(buffer);
 }
 
 export async function fetchHealth(): Promise<HealthStatus | null> {

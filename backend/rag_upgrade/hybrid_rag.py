@@ -104,6 +104,7 @@ class HybridRagService:
         rerank_query: str | None = None,
         external_query: str | None = None,
         external_hits: list | None = None,
+        on_stage=None,
     ) -> dict:
         """混合检索。extra_queries 为改写后的补充查询，与原查询的各路结果一起做 RRF；
         use_rerank 时对融合后的前 RERANK_CANDIDATES 个候选重排，失败则回退到融合排序。"""
@@ -128,6 +129,8 @@ class HybridRagService:
 
         reranked = False
         if use_rerank:
+            if on_stage and self.reranker and self.reranker.enabled:
+                on_stage("rerank")
             candidates = self._merge_hits(groups, top_k=env_int("RERANK_CANDIDATES", 20))
             contexts = self._rerank(rerank_query or query, candidates, top_k)
             reranked = contexts is not None
