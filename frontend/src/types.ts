@@ -1,5 +1,8 @@
 export type SearchMode = "quick" | "semantic" | "web";
 
+/** 后端 stage 事件：查询改写 / 召回 / 重排 / 生成 */
+export type RetrievalStage = "rewrite" | "retrieve" | "rerank" | "generate";
+
 export interface Source {
   id: number;
   kind: "local" | "web";
@@ -18,6 +21,10 @@ export interface Message {
   isStreaming?: boolean;
   isLoading?: boolean;
   sources?: Source[];
+  /** 检索实际使用的改写查询；与原问题相同或未改写时为空 */
+  rewritten?: string;
+  /** 仅流式过程中使用，不持久化 */
+  stage?: RetrievalStage;
   error?: string;
 }
 

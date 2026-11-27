@@ -53,7 +53,10 @@ export default function App() {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [health, setHealth] = useState<HealthStatus | null>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  // 引用卡片的碰撞边界：限制在对话区内，避免被底部输入框遮挡
+  const [scrollElement, setScrollElement] = useState<HTMLDivElement | null>(null);
+  const [mode, setMode] = useState<SearchMode>("quick");
   const stickToBottomRef = useRef(true);
   const [showJump, setShowJump] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
@@ -228,6 +231,8 @@ export default function App() {
       );
 
     setNotice(null);
+    // 示例问题自带模式：发送后输入框的模式选择器同步为本次实际使用的模式
+    setMode(mode);
     stickToBottomRef.current = true;
     updateSessionMessages(sessionId, (messages) => [...messages, userMessage, aiMessage]);
     setIsProcessing(true);
@@ -245,7 +250,9 @@ export default function App() {
       await streamChat(
         { message: text, mode, history },
         {
-          onSources: (sources) => patchAiMessage({ sources }),
+          onStage: (stage) => patchAiMessage({ stage }),
+          onSources: (sources, rewritten) =>
+            patchAiMessage({ sources, rewritten: rewritten && rewritten.trim() !== text.trim() ? rewritten : undefined }),
           onDelta: (delta) => {
             content += delta;
             if (flushTimer === undefined) flushTimer = window.setTimeout(flush, STREAM_FLUSH_MS);
@@ -255,13 +262,13 @@ export default function App() {
         controller.signal,
       );
       window.clearTimeout(flushTimer);
-      patchAiMessage({ content: content || "没有获取到回答，请稍后重试。", isLoading: false, isStreaming: false });
+      patchAiMessage({ content: content || "没有获取到回答，请稍后重试。", isLoading: false, isStreaming: false, stage: undefined });
     } catch (error) {
       window.clearTimeout(flushTimer);
       if (controller.signal.aborted) {
-        patchAiMessage({ content: content || "已停止生成。", isLoading: false, isStreaming: false, error: content ? "已手动停止生成，回答可能不完整。" : undefined });
+        patchAiMessage({ content: content || "已停止生成。", isLoading: false, isStreaming: false, stage: undefined, error: content ? "已手动停止生成，回答可能不完整。" : undefined });
       } else {
-        patchAiMessage({ content, isLoading: false, isStreaming: false, error: describeError(error) });
+        patchAiMessage({ content, isLoading: false, isStreaming: false, stage: undefined, error: describeError(error) });
         // 连接失败或网关 5xx（含本地代理在后端未启动时的 500）时，状态标记回"连接中"，由探测逻辑自动重连
         if (error instanceof TypeError || (error instanceof ApiError && (error.status ?? 0) >= 500)) setHealth(null);
       }
@@ -312,7 +319,12 @@ export default function App() {
         </header>
 
         <section className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
-          <div ref={scrollRef} onScroll={handleScroll} className="scroll-thin min-h-0 flex-1 overflow-y-auto px-4 sm:px-6">
+          <div
+            ref={(element) => {
+              scrollRef.current = element;
+              setScrollElement(element);
+            }}
+            onScroll={handleScroll} className="scroll-thin min-h-0 flex-1 overflow-y-auto px-4 sm:px-6">
             <div className="mx-auto flex w-full max-w-[760px] flex-col gap-6 py-6 sm:py-10">
               {notice && (
                 <div className="animate-fade rounded-xl bg-brand-50 px-4 py-3 text-sm text-brand-800 ring-1 ring-brand-100">{notice}</div>
@@ -352,7 +364,7 @@ export default function App() {
                   </div>
                 </div>
               ) : (
-                currentMessages.map((msg) => <ChatMessage key={msg.id} message={msg} serviceConnected={health !== null} />)
+                currentMessages.map((msg) => <ChatMessage key={msg.id} message={msg} serviceConnected={health !== null} boundary={scrollElement} />)
               )}
             </div>
           </div>
@@ -371,7 +383,14 @@ export default function App() {
           <div className="relative shrink-0 px-3 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-6 sm:pb-5">
             <div className="pointer-events-none absolute inset-x-0 -top-8 h-8 bg-gradient-to-t from-canvas to-transparent" />
             <div className="mx-auto w-full max-w-[760px]">
-              <ChatInput onSend={handleSend} onStop={handleStop} isProcessing={isProcessing} health={health} />
+              <ChatInput
+                mode={mode}
+                onModeChange={setMode}
+                onSend={handleSend}
+                onStop={handleStop}
+                isProcessing={isProcessing}
+                health={health}
+              />
               <p className="mt-2 text-center text-[11px] text-slate-400">AI 生成内容仅供参考，不作为最终承保或理赔结论。</p>
             </div>
           </div>

@@ -23,10 +23,8 @@ from api_limits import ApiLimits, LimitExceeded
 
 
 def verified_retrieval() -> dict:
-    return {
-        "reranked": True, "rewritten": None,
-        "sources": [{"id": 1, "kind": "local", "title": "测试条款", "section": "", "snippet": "保险责任", "score": 0.9}],
-    }
+    sources = [{"id": 1, "kind": "local", "title": "测试条款", "section": "", "snippet": "保险责任", "score": 0.9}]
+    return {"reranked": True, "rewritten": None, "sources": sources, "context_sources": sources}
 
 
 class ApiLimitsTests(unittest.TestCase):

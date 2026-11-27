@@ -4,6 +4,8 @@ import hashlib
 import json
 import logging
 import os
+import queue
+import re
 import time
 from concurrent.futures import ThreadPoolExecutor
 from typing import Generator, Literal
@@ -19,6 +21,7 @@ from api_limits import ApiLimits, ApiLimitsMiddleware
 from rag_upgrade import HybridRagService
 from rag_upgrade.config import env_bool, env_int, load_dotenv
 from rag_upgrade.query_rewriter import QueryRewriter
+from rag_upgrade.web_guard import is_insurance_related, is_off_topic_verdict
 
 
 SYSTEM_PROMPT = """你是一个保险资料检索问答助手，面向保险业务人员。
@@ -35,6 +38,11 @@ NO_CONTEXT_ANSWER = (
     "知识库中没有找到与这个问题相关的资料，无法给出可靠回答。\n\n"
     "当前资料库主要覆盖：雇主责任险、雇主安心保、企业团体综合意外险、施工保、财产一切险、装修保、"
     "亚马逊商业综合责任险，以及相关意外险条款和救援服务条款。如需查询库外信息，可以切换到“联网搜索”模式。"
+)
+
+WEB_OFF_TOPIC_ANSWER = (
+    "这个问题与保险无关，联网搜索只用于保险相关问题，本次没有进行联网查询。\n\n"
+    "可以询问保险产品、条款、理赔或保险行业动态等内容。"
 )
 
 # (use_es, use_embedding, use_external)。所有模式都做 Rerank；查询改写在 semantic / web 模式或存在多轮历史时启用。
@@ -104,28 +112,43 @@ def qwen_client() -> OpenAI | None:
     )
 
 
-def retrieve(message: str, mode: str, history: list[dict], top_k: int) -> dict:
-    """检索并过滤低相关片段。返回 search 结果，额外带 rewritten 与 sources（统一编号的引用列表）。"""
+def retrieve(message: str, mode: str, history: list[dict], top_k: int, on_stage=None) -> dict:
+    """检索并过滤低相关片段。返回 search 结果，额外带 rewritten、context_sources（送模型）与 sources（对外）。
+    on_stage(name) 在进入改写 / 召回 / 重排阶段时被调用，用于向前端推送进度。"""
+    notify = on_stage or (lambda _name: None)
     use_es, use_embedding, use_external = MODE_FLAGS.get(mode, MODE_FLAGS["quick"])
     rewritten = None
     prefetched_external = None
     embedding = service.embedding if use_embedding else None
+    # 主题闸门：问题命中保险词表时，无历史的联网搜索直接用原问题，与查询改写、原问题向量化并行执行；
+    # 未命中词表或多轮追问时，等改写器判定为保险相关后才联网，避免无关问题消耗搜索额度
+    fast_web = use_external and not history and is_insurance_related(message)
     with ThreadPoolExecutor(max_workers=3) as pool:
-        # 无历史时联网搜索直接用原问题，与查询改写、原问题向量化并行执行，减少联网模式的等待
-        web_future = pool.submit(service.external.search, message, top_k=3) if use_external and not history else None
+        web_future = pool.submit(service.external.search, message, top_k=3) if fast_web else None
         warmup = pool.submit(embedding.embed_query, message) if embedding and embedding.ensure_index() else None
         if history or mode != "quick":
+            if rewriter.client:
+                notify("rewrite")
             rewritten = rewriter.rewrite(message, history)
         if warmup:
             warmup.result()
         if web_future:
             prefetched_external = web_future.result()
+    off_topic = is_off_topic_verdict(rewritten)
+    if off_topic:
+        rewritten = None  # 判定标记不是检索查询，本地检索退回原问题
+    # 改写失败或未配置时退回词表判断（含多轮中用户的上一问）
+    keyword_hit = is_insurance_related(message) or any(
+        is_insurance_related(turn["content"]) for turn in history if turn["role"] == "user"
+    )
+    web_allowed = fast_web or (use_external and not off_topic and (rewritten is not None or keyword_hit))
+    notify("retrieve")
     result = service.search(
         query=rewritten or message,
         top_k=top_k,
         use_es=use_es,
         use_embedding=use_embedding,
-        use_external=use_external,
+        use_external=web_allowed,
         use_rerank=env_bool("ENABLE_RERANK", True),
         extra_queries=[message] if rewritten else None,
         embedding_queries=[message],
@@ -134,14 +157,61 @@ def retrieve(message: str, mode: str, history: list[dict], top_k: int) -> dict:
         external_hits=prefetched_external,
         # 无历史时原问题最能代表用户意图；多轮追问用补全指代后的改写查询做重排
         rerank_query=rewritten if history and rewritten else message,
+        on_stage=notify,
     )
     if result["reranked"]:
         # 低置信拒答：Rerank 相关度低于阈值的片段不提供给模型（阈值由 eval 库外题分布确定）
         min_score = float(os.getenv("RERANK_MIN_SCORE", "0.5"))
         result["contexts"] = [item for item in result["contexts"] if item["rerank_score"] >= min_score]
     result["rewritten"] = rewritten
-    result["sources"] = build_sources(result)
+    result["web_blocked"] = use_external and not web_allowed
+    # context_sources 原样送进模型（标题、条款名、正文与改动前一致）；sources 是清洗后的对外版本
+    result["context_sources"] = build_sources(result)
+    result["sources"] = [public_source(source) for source in result["context_sources"]]
     return result
+
+
+FILE_NUMBER_RE = re.compile(r"^\d+-")
+# 只由序号和标点组成的条款名（如"三、""Q3"之外的纯编号）对用户没有意义
+NUMBER_ONLY_SECTION_RE = re.compile(r"^[\s一二三四五六七八九十百零\d、，,.．:：()（）]*$")
+SECTION_MAX_CHARS = 30
+# 回答中的引用标记：[1]、[1][2]、[1,2]、[1、2]、[1-3]、【1】；不匹配 Markdown 链接 [文字](url)
+CITATION_MARK_RE = re.compile(r"[\[【]\s*\d{1,2}(?:\s*[,，、\-–~]\s*\d{1,2})*\s*[\]】](?!\()")
+
+
+def public_source(source: dict) -> dict:
+    """对外的来源：标题去掉文件编号，正文去掉检索用的"《文档名》条款名"前缀行，条款名换成可读的小节名。"""
+    if source["kind"] != "local":
+        return dict(source)
+    title = FILE_NUMBER_RE.sub("", source["title"])
+    section = source.get("section", "")
+    lines = source["snippet"].split("\n")
+    if lines and lines[0].strip() == f"《{title}》{section}".strip():
+        lines = lines[1:]
+    while lines and not lines[0].strip():
+        lines = lines[1:]
+    first_line = lines[0].strip() if lines else ""
+    if section.startswith("Q") and first_line.startswith(section):
+        # 问答类条款名在切分时被截到 24 字，对外给完整问句，正文不再重复
+        section, lines = first_line, lines[1:]
+    elif NUMBER_ONLY_SECTION_RE.match(section):
+        if len(first_line) <= SECTION_MAX_CHARS:
+            section, lines = first_line, lines[1:]
+        else:
+            section = first_line[:SECTION_MAX_CHARS] + "…"
+    return {**source, "title": title, "section": section, "snippet": "\n".join(lines).strip()}
+
+
+def strip_citations(text: str) -> str:
+    return CITATION_MARK_RE.sub("", text)
+
+
+def sanitize_history(history: list[dict]) -> list[dict]:
+    """历史回答里的 [n] 指向上一轮的资料，进入模型和改写器前去掉，避免本轮沿用旧编号。"""
+    return [
+        {**turn, "content": strip_citations(turn["content"])} if turn["role"] == "assistant" else turn
+        for turn in history
+    ]
 
 
 def build_sources(result: dict) -> list[dict]:
@@ -207,12 +277,27 @@ class ChatStreamingResponse(StreamingResponse):
                 await anyio.to_thread.run_sync(self._stream.close)
 
 
+def run_retrieval(message: str, mode: str, history: list[dict]) -> Generator[str, None, dict]:
+    """在后台线程检索，期间把阶段变化作为 stage 事件逐个产出；返回检索结果，异常原样抛出。"""
+    stages: queue.Queue[str] = queue.Queue()
+    with ThreadPoolExecutor(max_workers=1) as pool:
+        future = pool.submit(retrieve, message, mode, history, env_int("RAG_TOP_K", 6), stages.put)
+        while True:
+            try:
+                yield event("stage", stage=stages.get(timeout=0.05))
+            except queue.Empty:
+                if future.done() and stages.empty():
+                    break
+        return future.result()
+
+
 def stream_answer(message: str, mode: str, history: list[dict] | None = None) -> Generator[str, None, None]:
-    """NDJSON 事件流：sources → delta* → done；出错时输出 error 事件并降级为检索摘要。"""
-    history = history or []
+    """NDJSON 事件流：stage* → sources → stage → delta* → done；出错时输出 error 事件并降级为检索摘要。
+    stage 取值 rewrite / retrieve / rerank / generate（generate 仅在调用模型时出现），旧前端会忽略未知事件类型。"""
+    history = sanitize_history(history or [])
     started = time.perf_counter()
     try:
-        result = retrieve(message, mode, history, top_k=env_int("RAG_TOP_K", 6))
+        result = yield from run_retrieval(message, mode, history)
     except Exception as exc:
         logger.exception("retrieval failed")
         yield event("error", message=f"检索失败：{type(exc).__name__}")
@@ -223,7 +308,7 @@ def stream_answer(message: str, mode: str, history: list[dict] | None = None) ->
     log_request(message, mode, result, started)
 
     if not sources:
-        yield event("delta", text=NO_CONTEXT_ANSWER)
+        yield event("delta", text=WEB_OFF_TOPIC_ANSWER if result.get("web_blocked") else NO_CONTEXT_ANSWER)
         yield event("done")
         return
 
@@ -244,10 +329,11 @@ def stream_answer(message: str, mode: str, history: list[dict] | None = None) ->
     messages = [{"role": "system", "content": SYSTEM_PROMPT}]
     for turn in history[-env_int("CHAT_HISTORY_TURNS", 6):]:
         messages.append({"role": turn["role"], "content": turn["content"][:2000]})
-    messages.append({"role": "user", "content": f"{build_context_block(sources)}\n\n问题：{message}"})
+    messages.append({"role": "user", "content": f"{build_context_block(result['context_sources'])}\n\n问题：{message}"})
 
     emitted = False
     response = None
+    yield event("stage", stage="generate")
     try:
         response = client.chat.completions.create(
             model=os.getenv("QWEN_CHAT_MODEL", os.getenv("QWEN_MODEL", "qwen3.6-flash")),
@@ -289,6 +375,7 @@ def log_request(message: str, mode: str, result: dict, started: float) -> None:
             "q_len": len(message),
             "mode": mode,
             "rewritten": bool(result["rewritten"]),
+            "web_blocked": result.get("web_blocked", False),
             "reranked": result["reranked"],
             "sources": [f"{s['title']}#{s.get('section', '')}"[:40] for s in result["sources"]],
             "top_score": result["sources"][0]["score"] if result["sources"] else None,
